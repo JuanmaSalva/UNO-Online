@@ -4,9 +4,11 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
+#include <unistd.h>
 
 #include <iostream>
 #include <stdexcept>
+#include <string.h>
 
 #include <ostream>
 
@@ -59,7 +61,7 @@ public:
      *    @param address cadena que representa la dirección o nombre
      *    @param port cadena que representa el puerto o nombre del servicio
      */
-    Socket(const char * address, const char * port);
+    Socket(const char * address, const char * port, bool isClient = false);
 
     /**
      *  Inicializa un Socket copiando los parámetros del socket
@@ -67,6 +69,10 @@ public:
     Socket(struct sockaddr * _sa, socklen_t _sa_len);
 
     virtual ~Socket(){};
+
+    //devuelve 0 en casa de exito, -1 en caso de error, y en sock el socket del nuevo cliente
+    int clientConnect(Socket * &sock);
+
 
     /**
      *  Recibe un mensaje de aplicación
@@ -106,6 +112,11 @@ public:
     {
         return ::bind(sd, (const struct sockaddr *) &sa, sa_len);
     }
+
+    /*
+     * Pone a escuchar el socket con un número máximo de canales dado
+     */
+    void StartListen(int numConex);
 
     friend std::ostream& operator<<(std::ostream& os, const Socket& dt);
 

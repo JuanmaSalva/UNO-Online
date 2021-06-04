@@ -4,8 +4,8 @@
 #include <vector>
 #include <memory>
 
-#include "Serializable.h"
-#include "Socket.h"
+#include "../Common/Serializable.h"
+#include "../Common/Socket.h"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
