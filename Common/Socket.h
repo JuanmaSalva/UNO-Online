@@ -73,6 +73,7 @@ public:
     //devuelve 0 en casa de exito, -1 en caso de error, y en sock el socket del nuevo cliente
     int clientConnect(Socket * &sock);
 
+    void closeConection();
 
     /**
      *  Recibe un mensaje de aplicación
@@ -85,13 +86,13 @@ public:
      *
      *    @return 0 en caso de éxito o -1 si error (cerrar conexión)
      */
-    int recv(Serializable &obj, Socket * &sock);
+    int receive(Serializable &obj, Socket * &sock);
 
-    int recv(Serializable &obj) //Descarta los datos del otro extremo
+    int receive(Serializable &obj) //Descarta los datos del otro extremo
     {
         Socket * s = 0;
 
-        return recv(obj, s);
+        return receive(obj, s);
     }
 
     /**
@@ -103,7 +104,7 @@ public:
      *
      *    @return 0 en caso de éxito o -1 si error
      */
-    int send(Serializable& obj, const Socket& sock);
+    int sen(Serializable& obj, const Socket& sock);
 
     /**
      *  Enlaza el descriptor del socket a la dirección y puerto

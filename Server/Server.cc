@@ -1,12 +1,12 @@
 #include "Server.h"
+#include "../Client/Chat.h"
 
 void Server::StartGame(int numPlayers)
 {
     std::cout << "Creando nueva partida para " << numPlayers << " jugadores\n";
 
 
-    //esperamos a tener 4 jugadores esperando
-
+    //esperamos a tener el numero de jugadores requeridos
     while(connectedPlayers < numPlayers){
         Socket *client;
         
@@ -22,7 +22,15 @@ void Server::StartGame(int numPlayers)
         connectedPlayers++;
         std::cout << "Jugadores restantes: " << numPlayers-connectedPlayers << "\n";
     }
+    std::cout << "Partida llena, agarrate que esto empieza ya de ya\nVamos a enviar los datos\n";
 
-    std::cout << "Partida llena, agarrate que esto empieza ya de ya\n";
+    //recorremos todos los clientes y les mandamos un mensaje de que empiezxa el juego
+    /*ChatMessage msg; //mensaje provisional
+    for(int i=0;i<clients.size();i++){
+        Socket indx = *clients[i].get(); 
+        indx.sen(msg, indx);
+    }*/
 
+    socket.closeConection();
+    std::cout << "Hemos avisado a todos\n";
 }
