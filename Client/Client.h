@@ -9,6 +9,9 @@ public:
         //estamos ya conectados con el juego
     }
 
+    void StartGame();
+
+    void Close();
 
 private:
     Socket socket;
