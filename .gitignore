@@ -6,9 +6,9 @@
 !/Server/*.h
 !/Server/*.cc
 !/Client/*.h
-!/Client/*,cc
+!/Client/*.cc
 !/Common/*.h
-!/Common/*,cc
+!/Common/*.cc
 
 !Makefile
 !.gitignore
