@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../Common/Socket.h"
+#include "../Common/SocketTCP.h"
 
 class Client{
 public:
@@ -14,7 +14,7 @@ public:
     void Close();
 
 private:
-    Socket socket;
+    SocketTCP socket;
 
     std::string nombre;
 };

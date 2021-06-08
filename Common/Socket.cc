@@ -47,6 +47,8 @@ Socket::Socket(const char * address, const char * port, bool isClient):sd(-1)
 
     sa = *resInfo->ai_addr;
     sa_len = resInfo->ai_addrlen;
+
+    freeaddrinfo(resInfo);
 }
 
 Socket::Socket(struct sockaddr * _sa, socklen_t _sa_len) : sd(-1), sa(*_sa),sa_len(_sa_len){
@@ -55,7 +57,12 @@ Socket::Socket(struct sockaddr * _sa, socklen_t _sa_len) : sd(-1), sa(*_sa),sa_l
 	bind();
 };
 
-int Socket::clientConnect(Socket * &sock){
+Socket::Socket(struct sockaddr * _sa, socklen_t _sa_len, int socket_descriptor): sa(*_sa), sa_len(_sa_len) {
+    sd = socket_descriptor;
+    bind();
+}
+
+int Socket::clientConnect(Socket * sock){
     char host[NI_MAXHOST];
     char service[NI_MAXSERV];
 
@@ -66,7 +73,7 @@ int Socket::clientConnect(Socket * &sock){
     getnameinfo(&client, client_len, host, NI_MAXHOST, service, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV);
     std::cout << "Conexión desde: " << host << ":" << service << "\n";
 
-    sock = new Socket(&client, client_len);
+    sock = new Socket(&client, client_len, client_socket);
 
     return 0;
 }

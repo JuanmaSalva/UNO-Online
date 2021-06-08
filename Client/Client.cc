@@ -12,5 +12,5 @@ void Client::StartGame()
 }
 
 void Client::Close(){
-    socket.closeConection();
+    socket.closeConnection();
 }

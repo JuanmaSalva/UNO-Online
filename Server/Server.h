@@ -2,24 +2,18 @@
 #include <vector>
 #include <memory>
 
-#include "../Common/Socket.h"
+#include "../Common/SocketTCP.h"
 
 class Server{
 public:
-    Server(const char*s, const char*p): socket(s, p)
-    {
-        std::cout << "Creando el servidor del Uno\n";
-        socket.bind();
-        socket.StartListen(16);
-    };
-
+    Server(const char*s, const char*p);
 
     void StartGame(int numPlayers);
 
 private:
-    std::vector<std::unique_ptr<Socket>> clients;
+    std::vector<std::unique_ptr<SocketTCP>> clients;
 
-    Socket socket;
+    SocketTCP socket;
 
     int connectedPlayers = 0;
 };
