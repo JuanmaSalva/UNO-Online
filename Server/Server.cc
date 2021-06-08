@@ -4,10 +4,10 @@
 void Server::StartGame(int numPlayers)
 {
     std::cout << "Creando nueva partida para " << numPlayers << " jugadores\n";
-
+    
 
     //esperamos a tener el numero de jugadores requeridos
-    while(connectedPlayers < numPlayers){
+    /*while(connectedPlayers < numPlayers){
         Socket *client;
         
         if(socket.clientConnect(client) != 0){
@@ -22,7 +22,7 @@ void Server::StartGame(int numPlayers)
         connectedPlayers++;
         std::cout << "Jugadores restantes: " << numPlayers-connectedPlayers << "\n";
     }
-    std::cout << "Partida llena, agarrate que esto empieza ya de ya\nVamos a enviar los datos\n";
+    std::cout << "Partida llena, agarrate que esto empieza ya de ya\nVamos a enviar los datos\n";*/
 
     //recorremos todos los clientes y les mandamos un mensaje de que empiezxa el juego
     /*ChatMessage msg; //mensaje provisional

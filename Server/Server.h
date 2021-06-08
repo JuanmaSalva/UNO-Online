@@ -11,7 +11,6 @@ public:
         std::cout << "Creando el servidor del Uno\n";
         socket.bind();
         socket.StartListen(16);
-
     };
 
 

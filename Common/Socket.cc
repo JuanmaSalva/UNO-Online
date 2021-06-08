@@ -53,7 +53,6 @@ Socket::Socket(struct sockaddr * _sa, socklen_t _sa_len) : sd(-1), sa(*_sa),sa_l
 	//Creamos el constructor para poder enviar mensajes a los clientes
 	sd = socket(AF_INET,SOCK_STREAM,0);
 	bind();
-    StartListen(16);
 };
 
 int Socket::clientConnect(Socket * &sock){
@@ -73,16 +72,16 @@ int Socket::clientConnect(Socket * &sock){
 }
 
 void Socket::closeConection(){
-    std::cout << "Cerramos el socket\n";
-    close(sd);
+    if(close(sd) == 0) std::cout << "Socket cerrado con exito\n";
+    else std::cout << "No se ha podido cerrar el socket\n";
 }
 
-int Socket::receive(Serializable &obj, Socket * &sock)
+int Socket::recv(Serializable &obj, Socket * &sock)
 {
 
     char buffer[MAX_MESSAGE_SIZE];
 
-    ssize_t bytes = recv(sd, buffer, sizeof(buffer), 0);
+    ssize_t bytes = ::recv(sd, buffer, sizeof(buffer), 0);
 
     if ( bytes < 0 ){
         //std::cout << -2 << "\n";
@@ -106,7 +105,7 @@ int Socket::receive(Serializable &obj, Socket * &sock)
     return 0;
 }
 
-int Socket::sen(Serializable& obj, const Socket& sock)
+int Socket::send(Serializable& obj, const Socket& sock)
 {
     //Serializar el objeto
     obj.to_bin();
@@ -114,13 +113,14 @@ int Socket::sen(Serializable& obj, const Socket& sock)
     //Enviar el objeto binario a sock usando el socket sd
         
     std::cout << "Prepatando un dato\n";
-    send(sock.sd, obj.data(), obj.size(), 0);
+    ::send(sock.sd, obj.data(), obj.size(), 0);
     std::cout << "Un dato enviado\n";
 }
 
 void Socket::StartListen(int numConex)
 {
-    listen(sd, numConex);
+    if(listen(sd, numConex) == 0) std::cout << "Se está escuchando bien\n";
+    else "No se está escuchando bien\n";
 }
 
 bool operator== (const Socket &s1, const Socket &s2)
