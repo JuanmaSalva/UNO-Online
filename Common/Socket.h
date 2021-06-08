@@ -68,10 +68,12 @@ public:
      */
     Socket(struct sockaddr * _sa, socklen_t _sa_len);
 
+    Socket(struct sockaddr * _sa, socklen_t _sa_len, int socket_descriptor);
+
     virtual ~Socket(){};
 
     //devuelve 0 en casa de exito, -1 en caso de error, y en sock el socket del nuevo cliente
-    int clientConnect(Socket * &sock);
+    int clientConnect(Socket * sock);
 
     void closeConection();
 

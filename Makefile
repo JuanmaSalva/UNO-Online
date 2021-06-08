@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-g -I. -std=c++11
-DEPS = Common/Socket.h Server/Server.h Client/Client.h Client/Chat.h
-OBJ = Common/Socket.o Server/Server.o Client/Client.o Client/Chat.o
+DEPS = Common/Socket.h Server/Server.h Client/Client.h Client/Chat.h Common/SocketTCP.h
+OBJ = Common/Socket.o Server/Server.o Client/Client.o Client/Chat.o Common/SocketTCP.o
 LIBS=-lpthread
 
 %.o: %.cc $(DEPS)
