@@ -11,13 +11,16 @@ all: uno_server uno_client
 
 uno_server: $(OBJ) Server/Uno_Server.o
 	g++ -o Server/$@ $^ $(CFLAGS) $(LIBS)
+	mv Server/$@ ./
 
 uno_client: $(OBJ) Client/Uno_Client.o
 	g++ -o Client/$@ $^ $(CFLAGS) $(LIBS)
+	mv Client/$@ ./
 
 
 .PHONY: clean
 
 clean:
-	rm -f *.o cs cc
+	rm -f uno_server uno_client
+	rm -f Client/*.o Server/*.o Common/*.o
 
