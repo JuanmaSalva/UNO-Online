@@ -3,11 +3,7 @@
 
 void Client::StartGame()
 {
-    while(socket.recv() != 0);
-
-    std::cout << "Nos han cerrado la conexión\n";
-
-    //Close();
+    //while(socket.recv() != 0);
 }
 
 void Client::Close(){

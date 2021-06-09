@@ -9,12 +9,17 @@
 
 #include <ostream>
 
-class Socket;
+class SocketTCP;
 class Serializable;
+
+bool operator == (const SocketTCP &s1, const SocketTCP &s2);
+std::ostream& operator << (std::ostream& os, const SocketTCP& dt);
 
 class SocketTCP
 {
 public:
+    static const int32_t MAX_MESSAGE_SIZE = 32000; //aprox xd
+
     //constructora para el server
     SocketTCP(const char *address, const char *port, bool isClient = false);
 
@@ -24,7 +29,14 @@ public:
 
     void closeConnection();
 
-    int recv();
+    int recv(Serializable &obj);
+
+    int send(Serializable &obj);
+
+    friend std::ostream& operator<<(std::ostream& os, const SocketTCP& dt);
+
+    friend bool operator== (const SocketTCP &s1, const SocketTCP &s2);
+
 
 private:
     int sd;

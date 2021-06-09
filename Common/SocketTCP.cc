@@ -1,4 +1,5 @@
 #include "SocketTCP.h"
+#include "Serializable.h"
 #include <errno.h>
 
 SocketTCP::SocketTCP(const char *address, const char *port, bool isClient)
@@ -100,8 +101,58 @@ SocketTCP *SocketTCP::clientConnect()
     return new SocketTCP(client, client_len, client_socket);
 }
 
-int SocketTCP::recv()
+int SocketTCP::recv(Serializable &obj)
 {
-    char buffer[50];
-    return ::recv(sd, buffer, 50, 0);
+    char buffer[MAX_MESSAGE_SIZE];
+    ssize_t bytes = ::recv(sd, buffer, sizeof(buffer), 0);
+
+    if(bytes < 0){
+        std::cerr << "[recv] error: " << strerror(errno) << "\n";
+    }
+
+    if(bytes == 0)
+        std::cout << "Se ha cerrado la conexión\n";
+    else 
+        obj.from_bin(buffer);
+
+    return bytes;
 }
+
+int SocketTCP::send(Serializable &obj)
+{
+    obj.to_bin();
+
+    int bytes = ::send(sd, obj.data(), obj.size(), 0);
+
+    if(bytes < 0 )
+        std::cerr << "[send] error: " << strerror(errno) << "\n";
+    
+    return bytes;
+}
+
+bool operator == (const SocketTCP &s1, const SocketTCP &s2)
+{
+    //en memoria un sockaddr_in es lo mismo que un sockaddr
+    const struct sockaddr_in* a = (const struct sockaddr_in*)&s1.sa;
+    const struct sockaddr_in* b = (const struct sockaddr_in*)&s2.sa;
+
+    //Complos campos sin_family, sin_addr.s_addr y sin_port
+    //de la estructura sockaddr_in de los Sockets s1 y s2
+    //Retornar falarar se si alguno difiere
+    if(a->sin_family == b->sin_family && a->sin_addr.s_addr == b->sin_addr.s_addr && a->sin_port == b->sin_port)
+     return true;
+    else return false;
+};
+
+std::ostream& operator<<(std::ostream& os, const SocketTCP& dt)
+{
+    char host[NI_MAXHOST];
+    char serv[NI_MAXSERV];
+
+    getnameinfo((struct sockaddr *) &(dt.sa), dt.sa_len, host, NI_MAXHOST, serv,
+                NI_MAXSERV, NI_NUMERICHOST);
+
+    os << host << ":" << serv;
+
+    return os;
+};
