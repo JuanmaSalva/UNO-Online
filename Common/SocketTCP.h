@@ -12,23 +12,23 @@
 class Socket;
 class Serializable;
 
-
-class SocketTCP{
+class SocketTCP
+{
 public:
     //constructora para el server
-    SocketTCP(const char * address, const char * port, bool isClient = false);
+    SocketTCP(const char *address, const char *port, bool isClient = false);
 
     SocketTCP(struct sockaddr _sa, socklen_t _sa_len, int newSd);
 
-    SocketTCP* clientConnect();
+    SocketTCP *clientConnect();
 
     void closeConnection();
 
     int recv();
 
-private: 
+private:
     int sd;
 
     struct sockaddr sa;
-    socklen_t       sa_len;
+    socklen_t sa_len;
 };

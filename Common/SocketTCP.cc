@@ -1,4 +1,5 @@
 #include "SocketTCP.h"
+#include <errno.h>
 
 SocketTCP::SocketTCP(const char *address, const char *port, bool isClient)
 {
@@ -39,9 +40,16 @@ SocketTCP::SocketTCP(const char *address, const char *port, bool isClient)
         //en res[0] tenemos la direccion traducida a binario y el puerto
         sd = socket(resInfo->ai_family, resInfo->ai_socktype, 0); //creamos un socket
 
+        //Nos aseguramos de poder rehostear en la misma IP
+        int option = 1;
+        if(setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) != 0){
+            std::cerr << "[setsockopt] error: " << strerror(errno) << "\n";
+            return;
+        }
+
         if (sd == -1)
         {
-            std::cout << "[socket] error\n";
+            std::cerr << "[socket] error: " << strerror(errno) << "\n";
             return;
         }
 
@@ -50,13 +58,13 @@ SocketTCP::SocketTCP(const char *address, const char *port, bool isClient)
 
         if (info != 0)
         {
-            std::cerr << "[bind] error\n";
+            std::cerr << "[bind] error: " << strerror(errno) << "\n";
             return;
         }
 
         if (listen(sd, 16) != 0) //16 conexiones posibles
         {
-            std::cerr << "[listen] error\n";
+            std::cerr << "[listen] error: " << strerror(errno) << "\n";
             return;
         }
     }
