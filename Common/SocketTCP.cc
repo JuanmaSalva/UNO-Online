@@ -1,51 +1,65 @@
 #include "SocketTCP.h"
 
-SocketTCP::SocketTCP(const char * address, const char * port, bool isClient){
+SocketTCP::SocketTCP(const char *address, const char *port, bool isClient)
+{
     struct addrinfo hintsInfo;
-    struct addrinfo * resInfo, * rp;
+    struct addrinfo *resInfo, *rp;
 
-    memset((void*) &hintsInfo, 0, sizeof(struct addrinfo));
+    memset((void *)&hintsInfo, 0, sizeof(struct addrinfo));
 
-    hintsInfo.ai_family = AF_INET; //le decimos que tiene que ser ipv4
+    hintsInfo.ai_family = AF_INET;       //le decimos que tiene que ser ipv4
     hintsInfo.ai_socktype = SOCK_STREAM; //tcp
 
     //hacemos la llamada por red
     int info = getaddrinfo(address, port, &hintsInfo, &resInfo);
 
-    if(info != 0)
+    if (info != 0)
     { //error
-        std::cout << "Se ha producido un error\n";
+        std::cout << "[getaddrinfo] error: " << gai_strerror(info) << "\n";
         return;
     }
 
-
-    if(isClient){
+    if (isClient)
+    {
         //de toda la indormacion que nos da getaddrinfo, buscamos cual es la que queremos
-        for(rp = resInfo; rp != NULL; rp = rp->ai_next){
-        sd = socket(rp->ai_family, rp->ai_socktype, 0); //creamos un socket
-        
-        if(sd == -1) 
-            continue;
-        if(connect(sd, rp->ai_addr, rp->ai_addrlen) != -1)
-            break;
+        for (rp = resInfo; rp != NULL; rp = rp->ai_next)
+        {
+            sd = socket(rp->ai_family, rp->ai_socktype, 0); //creamos un socket
 
-        close(sd); //no deberiamos llegar aquí
+            if (sd == -1)
+                continue;
+            if (connect(sd, rp->ai_addr, rp->ai_addrlen) != -1)
+                break;
+
+            close(sd); //no deberiamos llegar aquí
+        }
     }
-    }
-    else {
-        //en res[0] tenemos la direccion traducida a binario y el puerto    
+    else
+    {
+        //en res[0] tenemos la direccion traducida a binario y el puerto
         sd = socket(resInfo->ai_family, resInfo->ai_socktype, 0); //creamos un socket
-        if(sd == -1){
-            std::cout << "Se ha producido un error al crear el socket\n";
+
+        if (sd == -1)
+        {
+            std::cout << "[socket] error\n";
             return;
         }
 
         //hacemos el bind para asignarle una direccion al socket que acabamos de crear
-        bind(sd, resInfo->ai_addr, resInfo->ai_addrlen);
+        info = bind(sd, resInfo->ai_addr, resInfo->ai_addrlen);
 
-        listen(sd, 16); //16 concexiones posibles
+        if (info != 0)
+        {
+            std::cerr << "[bind] error\n";
+            return;
+        }
+
+        if (listen(sd, 16) != 0) //16 conexiones posibles
+        {
+            std::cerr << "[listen] error\n";
+            return;
+        }
     }
-
 
     freeaddrinfo(resInfo);
 
@@ -53,18 +67,20 @@ SocketTCP::SocketTCP(const char * address, const char * port, bool isClient){
     sa_len = resInfo->ai_addrlen;
 }
 
-SocketTCP::SocketTCP(struct sockaddr _sa, socklen_t _sa_len, int newSd): sa(_sa), sa_len(_sa_len){
+SocketTCP::SocketTCP(struct sockaddr _sa, socklen_t _sa_len, int newSd) : sa(_sa), sa_len(_sa_len)
+{
     sd = newSd;
 }
 
-void SocketTCP::closeConnection(){
+void SocketTCP::closeConnection()
+{
     close(sd);
 }
 
-SocketTCP* SocketTCP::clientConnect(){
+SocketTCP *SocketTCP::clientConnect()
+{
     char host[NI_MAXHOST];
     char service[NI_MAXSERV];
-
 
     struct sockaddr client;
     socklen_t client_len = sizeof(struct sockaddr);
@@ -76,7 +92,8 @@ SocketTCP* SocketTCP::clientConnect(){
     return new SocketTCP(client, client_len, client_socket);
 }
 
-int SocketTCP::recv(){
+int SocketTCP::recv()
+{
     char buffer[50];
-    return ::recv(sd,buffer, 50, 0);
+    return ::recv(sd, buffer, 50, 0);
 }
