@@ -4,7 +4,7 @@
 
 Player::Player()
 {
-	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(uint8_t) * 2;
+	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(uint8_t) * 3;
 }
 
 void Player::to_bin()
@@ -46,6 +46,8 @@ void Player::to_bin()
 	//number of cards
 	memcpy(tmp, &numCards, sizeof(uint8_t));
 	tmp += sizeof(uint8_t);
+
+	
 }
 
 

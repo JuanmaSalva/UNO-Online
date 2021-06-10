@@ -16,5 +16,7 @@ int main(int argc, char **argv) //argv[1] = direccion, argv[2] = puerto, argv[3]
 
     server.StartGame();
 
+    server.EndGame();
+
     return 0;
 }

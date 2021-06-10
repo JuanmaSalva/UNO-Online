@@ -1,6 +1,7 @@
 #include "Server.h"
 #include <cstdlib> 
 #include <algorithm>  
+#include "../Common/Play.h"
 
 Server::Server(const char *s, const char *p, int _numPlayers) : socket(s, p), numPlayers(_numPlayers)
 {
@@ -16,17 +17,13 @@ void Server::StartGame()
 {
     //repartimos las cartas a los jugadores
     DealCards();
+    SendInfo();
 
-    for(int i=0;i<clients.size();i++){
-        SocketTCP indx = *clients[i].get(); 
-        //les mandamos un mensaje a todos de que empieza el juego (antes de esto tenemos que asegurarnos de repartir las cartas)
-        players[i].type = Player::INFO;
-        players[i].setTopCard(topCard);
-        indx.send(players[i]);
+    while(inGame)
+    {
+        WaitPlayer();
+        if(inGame) SendInfo(); //antes de mandarlo miramo si seguimos en el juego
     }
-
-    while(true);
-    
 
     socket.closeConnection();
 }
@@ -83,4 +80,42 @@ void Server::DealCards(){
     topCard = cardsPile.front();
     usedCardsPile.push(cardsPile.front());
     cardsPile.pop();
+}
+
+void Server::SendInfo(){
+    //manda un mensaje a todo el mundo de la información de la partida, y al que le toca el turno le manda un mensaje especial
+
+    for(int i=0;i<clients.size();i++){
+        SocketTCP indx = *clients[i].get(); 
+        //les mandamos un mensaje a todos de que empieza el juego (antes de esto tenemos que asegurarnos de repartir las cartas)
+        if(i != playerTurn) players[i].type = Player::INFO;
+        else players[i].type = Player::TURN;
+        players[i].setTopCard(topCard);
+        indx.send(players[i]);
+    }
+}
+
+void Server::WaitPlayer(){
+    SocketTCP indx = *clients[playerTurn].get(); 
+    Play play;
+
+    if(indx.recv(play) == 0){
+        //terminamos el juego
+        inGame = false;
+    }
+    else std::cout << "Se ha jugado una carta \n";
+
+    //le quitamos al jugador esa carta y la ponemos en el montón
+
+    playerTurn++;
+    playerTurn %= numPlayers;
+}
+
+void Server::EndGame(){
+    //les enviamos un mensaje a todos que hemos terminado la partida
+    for(int i=0;i<clients.size();i++){
+        SocketTCP indx = *clients[i].get(); 
+        players[i].type = Player::END;
+        indx.send(players[i]);
+    }
 }

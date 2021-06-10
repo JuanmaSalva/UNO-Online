@@ -12,6 +12,7 @@ public:
     Server(const char*s, const char*p, int _numPlayers);
 
     void StartGame();
+    void EndGame();
 
 private:
     std::vector<std::unique_ptr<SocketTCP>> clients;
@@ -28,7 +29,14 @@ private:
     int connectedPlayers = 0;
     int numPlayers;
 
+    int playerTurn = 0; //empieza jugando el juegador 0
+
+    bool inGame = true;
+
     void InitCards();
     void ConnectPlayer();
     void DealCards();
+
+    void SendInfo();
+    void WaitPlayer();
 };

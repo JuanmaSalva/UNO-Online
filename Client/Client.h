@@ -12,6 +12,7 @@ public:
     void StartGame();
 
     void Close();
+    void Turn();
 
 private:
     SocketTCP socket;

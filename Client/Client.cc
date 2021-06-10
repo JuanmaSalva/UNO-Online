@@ -1,5 +1,6 @@
 #include "Client.h"
 #include "../Common/Player.h"
+#include "../Common/Play.h"
 
 void Client::StartGame()
 {
@@ -27,6 +28,8 @@ void Client::StartGame()
                 {
                     std::cout << "TURN\n";
                     msg.Print();
+                    std::cout << "\nIt's your turn to play. Select which card you want to play (0-n)\n";
+                    Turn();
                     break;
                 }
             case 3:
@@ -43,4 +46,12 @@ void Client::StartGame()
 
 void Client::Close(){
     socket.closeConnection();
+}
+
+void Client::Turn(){
+    int c;
+    std::cin >> c;
+    
+    Play play = Play(c);
+    socket.send(play);
 }
