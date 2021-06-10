@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../Common/Socket.h"
+#include "../Common/SocketTCP.h"
 
 class Client{
 public:
@@ -9,9 +9,12 @@ public:
         //estamos ya conectados con el juego
     }
 
+    void StartGame();
+
+    void Close();
 
 private:
-    Socket socket;
+    SocketTCP socket;
 
     std::string nombre;
 };

@@ -63,7 +63,7 @@ void ChatServer::do_messages()
         //Recibir Mensajes en y en función del tipo de mensaje
         ChatMessage msg;
         Socket *auxSock = &socket;
-        socket.receive(msg, auxSock);
+        socket.recv(msg, auxSock);
 
         switch(msg.type){
             case 0:
@@ -81,7 +81,7 @@ void ChatServer::do_messages()
                     Socket indx = *clients[i].get(); 
                     if(!(indx == *auxSock)){
                         //mandar el mensaje al resto
-                        indx.sen(msg, indx);
+                        indx.send(msg, indx);
                     }
                 }
                 break;
@@ -93,7 +93,7 @@ void ChatServer::do_messages()
                 for(int i=0;i<clients.size();i++){
                     Socket indx = *clients[i].get(); 
                     if((indx == *auxSock)){
-                        indx.sen(msg, indx);
+                        indx.send(msg, indx);
                         clients.erase(clients.begin() + i);
                         break;
                     }
@@ -114,7 +114,7 @@ void ChatClient::login()
     ChatMessage em(nick, msg);
     em.type = ChatMessage::LOGIN;
 
-    socket.sen(em, socket);
+    socket.send(em, socket);
 }
 
 void ChatClient::logout()
@@ -124,7 +124,7 @@ void ChatClient::logout()
     ChatMessage em(nick, msg);
     em.type = ChatMessage::LOGOUT;
 
-    socket.sen(em, socket);
+    socket.send(em, socket);
 }
 
 void ChatClient::input_thread()
@@ -145,7 +145,7 @@ void ChatClient::input_thread()
         else { //mandamos un mensaje normal            
             em.type = ChatMessage::MESSAGE;
         }
-        socket.sen(em, socket);
+        socket.send(em, socket);
     }
 }
 
@@ -155,7 +155,7 @@ void ChatClient::net_thread()
     {
         //Recibir Mensajes de red
         ChatMessage msg;
-        socket.receive(msg);
+        socket.recv(msg);
 
         //std::cout << "Mensaje recibido\n";
         if(msg.message != "quit")
