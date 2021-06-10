@@ -22,6 +22,10 @@ public:
 
 	int from_bin(char *data);
 
+	void addCard(Card c);
+
+	void setTopCard(Card c);
+
 	enum MessageType
     {
         START   = 0, //empieza la partida
@@ -31,6 +35,7 @@ public:
     };
 
     uint8_t type;
+	uint8_t numCards = 0;
 
 	void Print();
 };

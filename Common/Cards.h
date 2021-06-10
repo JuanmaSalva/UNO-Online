@@ -3,11 +3,11 @@
 
 enum class Colors : short
 {
-	Wild = 0,
-	Red = 1,
-	Yellow = 2,
-	Green = 3,
-	Blue = 4
+	Red = 0,
+	Yellow = 1,
+	Green = 2,
+	Blue = 3,
+	Wild = 4
 	//NULL
 };
 
@@ -64,7 +64,7 @@ public:
 				std::cout << "Te mamaste ";
 				break;
 			default:
-				std::cout << (int)_symbol << "\n";
+				std::cout << (int)_symbol << " ";
 				break;
 		}
 

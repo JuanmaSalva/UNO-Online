@@ -4,7 +4,7 @@
 
 Player::Player()
 {
-	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(uint8_t);
+	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(uint8_t) * 2;
 }
 
 void Player::to_bin()
@@ -41,6 +41,10 @@ void Player::to_bin()
 
 	//msg type
 	memcpy(tmp, &type, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
+
+	//number of cards
+	memcpy(tmp, &numCards, sizeof(uint8_t));
 	tmp += sizeof(uint8_t);
 }
 
@@ -82,6 +86,10 @@ int Player::from_bin(char *data)
 	memcpy(&type, tmp, sizeof(uint8_t));
 	tmp += sizeof(uint8_t);
 
+	//number of cards
+	memcpy(&numCards, tmp, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
+
 	return 0;
 }
 
@@ -93,7 +101,17 @@ void Player::Print()
 	std::cout << "Top card on the pile: ";
 	_topCard.Print();
 
-	std::cout << "Your cards: " << "Vaya parguela, aun no tienes cartas\n";
-	//PrintSymbol(p._topCard.getSymbol());
-	//PrintColor(p._topCard.getColor());
+	std::cout << "\nYour cards are:\n";
+	for(int i=0; i<numCards;i++){
+		_playerHand[i].Print();
+	}
+}
+
+void Player::addCard(Card c){
+	_playerHand[numCards] = c;
+	numCards++;
+}
+
+void Player::setTopCard(Card c){
+	_topCard = c;
 }
