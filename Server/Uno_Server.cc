@@ -12,9 +12,9 @@ int main(int argc, char **argv) //argv[1] = direccion, argv[2] = puerto, argv[3]
         return 0;
     }
 
-    Server server(argv[1], argv[2]);
+    Server server(argv[1], argv[2], atoi(argv[3]));
 
-    server.StartGame(atoi(argv[3]));
+    server.StartGame();
 
     return 0;
 }

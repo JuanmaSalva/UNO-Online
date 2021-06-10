@@ -115,6 +115,7 @@ int SocketTCP::recv(Serializable &obj)
     else 
         obj.from_bin(buffer);
 
+    std::cout << "Mensaje recibido\n";
     return bytes;
 }
 

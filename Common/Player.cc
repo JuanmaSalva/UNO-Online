@@ -1,8 +1,10 @@
 #include "Player.h"
 
+#include <iostream>
+
 Player::Player()
 {
-	_size = (MAX_HAND_SIZE + 1) * sizeof(Card);
+	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(uint8_t);
 }
 
 void Player::to_bin()
@@ -36,7 +38,12 @@ void Player::to_bin()
 	auxSymbol = _topCard.getSymbol();
 	memcpy(tmp, &auxSymbol, sizeof(Symbol));
 	tmp += sizeof(Symbol);
+
+	//msg type
+	memcpy(tmp, &type, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
 }
+
 
 int Player::from_bin(char *data)
 {
@@ -71,5 +78,22 @@ int Player::from_bin(char *data)
 
 	_topCard = Card(auxColor, auxSymbol);
 
+	//msg type
+	memcpy(&type, tmp, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
+
 	return 0;
+}
+
+
+void Player::Print()
+{
+	system("clear");
+
+	std::cout << "Top card on the pile: ";
+	_topCard.Print();
+
+	std::cout << "Your cards: " << "Vaya parguela, aun no tienes cartas\n";
+	//PrintSymbol(p._topCard.getSymbol());
+	//PrintColor(p._topCard.getColor());
 }

@@ -6,9 +6,9 @@
 
 class Server{
 public:
-    Server(const char*s, const char*p);
+    Server(const char*s, const char*p, int _numPlayers);
 
-    void StartGame(int numPlayers);
+    void StartGame();
 
 private:
     std::vector<std::unique_ptr<SocketTCP>> clients;
@@ -16,4 +16,7 @@ private:
     SocketTCP socket;
 
     int connectedPlayers = 0;
+    int numPlayers;
+
+    void ConnectPlayer();
 };

@@ -17,4 +17,6 @@ private:
     SocketTCP socket;
 
     std::string nombre;
+
+    bool inGame = true;
 };
