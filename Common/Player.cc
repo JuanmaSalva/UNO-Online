@@ -117,3 +117,12 @@ void Player::addCard(Card c){
 void Player::setTopCard(Card c){
 	_topCard = c;
 }
+
+void Player::playCard(uint8_t c){
+	//movemos todas las cartas desde c una posicion a la izquierda
+	for(int i = c; i<numCards; i++){
+		_playerHand[i] = _playerHand[i+1];
+	}
+	
+	numCards--;
+}

@@ -9,8 +9,12 @@ void Client::StartGame()
 
     while (inGame){
         Player msg;
-        socket.recv(msg);
-
+        if(socket.recv(msg) == 0) 
+        {
+            inGame = false;
+            continue;
+        }
+        
         switch (msg.type)
         {
             case 0:

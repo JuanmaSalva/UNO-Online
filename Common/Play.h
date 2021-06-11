@@ -17,4 +17,8 @@ public:
 	void to_bin();
 
 	int from_bin(char *data);
+
+	uint8_t getCardPlayed(){
+		return cardPlayed;
+	}
 };

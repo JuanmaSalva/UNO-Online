@@ -26,6 +26,12 @@ public:
 
 	void setTopCard(Card c);
 
+	Card getCard(uint8_t i){
+		return _playerHand[i];
+	}
+
+	void playCard(uint8_t c);
+
 	enum MessageType
     {
         START   = 0, //empieza la partida

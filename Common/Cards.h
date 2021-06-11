@@ -61,7 +61,7 @@ public:
 				std::cout << "Wild\n";
 				break;
 			case Symbol::WildDrawFour:
-				std::cout << "Te mamaste ";
+				std::cout << "Te mamaste (aka x4 multicolor)\n";
 				break;
 			default:
 				std::cout << (int)_symbol << " ";

@@ -103,9 +103,13 @@ void Server::WaitPlayer(){
         //terminamos el juego
         inGame = false;
     }
-    else std::cout << "Se ha jugado una carta \n";
-
-    //le quitamos al jugador esa carta y la ponemos en el montón
+    else {std::cout << "Se ha jugado una carta \n";
+        //le quitamos al jugador esa carta y la ponemos en el montón
+        usedCardsPile.push(players[playerTurn].getCard(play.getCardPlayed()));
+        topCard = usedCardsPile.back();
+        usedCardsPile.back().Print();
+        players[playerTurn].playCard(play.getCardPlayed());
+    }
 
     playerTurn++;
     playerTurn %= numPlayers;
