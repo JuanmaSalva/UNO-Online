@@ -1,8 +1,10 @@
 #include "Player.h"
 
+#include <iostream>
+
 Player::Player()
 {
-	_size = (MAX_HAND_SIZE + 1) * sizeof(Card);
+	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(uint8_t) * 2;
 }
 
 void Player::to_bin()
@@ -36,6 +38,14 @@ void Player::to_bin()
 	auxSymbol = _topCard.getSymbol();
 	memcpy(tmp, &auxSymbol, sizeof(Symbol));
 	tmp += sizeof(Symbol);
+
+	//number of cards
+	memcpy(tmp, &numCards, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
+
+	//msg type
+	memcpy(tmp, &type, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
 }
 
 int Player::from_bin(char *data)
@@ -71,5 +81,52 @@ int Player::from_bin(char *data)
 
 	_topCard = Card(auxColor, auxSymbol);
 
+	//number of cards
+	memcpy(&numCards, tmp, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
+
+	//msg type
+	memcpy(&type, tmp, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
+
 	return 0;
+}
+
+void Player::Print()
+{
+	system("clear");
+
+	std::cout << "Top card on the pile: ";
+	_topCard.print();
+	std::cout << std::endl;
+
+	std::cout << "\nYour cards are:\n";
+	for (int i = 0; i < numCards; i++)
+	{
+		std::cout << i+1 << ". ";
+		_playerHand[i].print();
+		std::cout << std::endl;
+	}
+}
+
+void Player::addCard(Card c)
+{
+	_playerHand[numCards] = c;
+	numCards++;
+}
+
+void Player::setTopCard(Card c)
+{
+	_topCard = c;
+}
+
+void Player::playCard(uint8_t c)
+{
+	//movemos todas las cartas desde c una posicion a la izquierda
+	for (int i = c; i < numCards; i++)
+	{
+		_playerHand[i] = _playerHand[i + 1];
+	}
+
+	numCards--;
 }

@@ -12,9 +12,12 @@ public:
     void StartGame();
 
     void Close();
+    void Turn();
 
 private:
     SocketTCP socket;
 
     std::string nombre;
+
+    bool inGame = true;
 };
