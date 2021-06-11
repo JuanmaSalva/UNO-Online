@@ -29,12 +29,12 @@ private:
     int connectedPlayers = 0;
     int numPlayers;
 
-    int playerTurn = 0; //empieza jugando el juegador 0
+    int playerTurn = 0; //empieza jugando el jugador 0
 
     bool inGame = true;
 
     void InitCards();
-    void ConnectPlayer();
+    void ConnectPlayers();
     void DealCards();
 
     void SendInfo();

@@ -32,7 +32,7 @@ void Client::StartGame()
                 {
                     std::cout << "TURN\n";
                     msg.Print();
-                    std::cout << "\nIt's your turn to play. Select which card you want to play (0-n)\n";
+                    std::cout << "\nIt's your turn to play. Select which card you want to play\n";
                     Turn();
                     break;
                 }
@@ -53,9 +53,9 @@ void Client::Close(){
 }
 
 void Client::Turn(){
-    int c;
+    uint8_t c;
     std::cin >> c;
     
-    Play play = Play(c);
+    Play play = Play(c-1);
     socket.send(play);
 }

@@ -44,7 +44,27 @@ public:
 	Colors getColor() const {return _color;}
 	Symbol getSymbol() const {return _symbol;}
 
-	void Print(){
+	void print(){
+		//imprimimos el color
+		switch (_color)
+		{
+			case Colors::Red:
+				std::cout << "Red ";
+				break;
+			case Colors::Yellow:
+				std::cout << "Yellow ";
+				break;
+			case Colors::Green:
+				std::cout << "Green ";
+				break;
+			case Colors::Blue:
+				std::cout << "Blue ";
+				break;
+			case Colors::Wild:
+			default:
+				break;
+		}
+
 		//imprimimos el simbolo
 		switch (_symbol)
 		{
@@ -58,32 +78,13 @@ public:
 				std::cout << "DrawTwo ";
 				break;
 			case Symbol::Wild:
-				std::cout << "Wild\n";
+				std::cout << "Wild";
 				break;
 			case Symbol::WildDrawFour:
-				std::cout << "Te mamaste (aka x4 multicolor)\n";
+				std::cout << "Te mamaste (aka x4 multicolor)";
 				break;
 			default:
 				std::cout << (int)_symbol << " ";
-				break;
-		}
-
-		//imprimimos el color
-		switch (_color)
-		{
-			case Colors::Red:
-				std::cout << "Red\n";
-				break;
-			case Colors::Yellow:
-				std::cout << "Yellow\n";
-				break;
-			case Colors::Green:
-				std::cout << "Green\n";
-				break;
-			case Colors::Blue:
-				std::cout << "Blue\n";
-				break;
-			default:
 				break;
 		}
 	}
