@@ -45,7 +45,9 @@ public:
 	Symbol getSymbol() const {return _symbol;}
 
 	void Print(){
-		//imprimimos el simbolo
+		ChangeColour();
+		
+		//imrpime el simbolo
 		switch (_symbol)
 		{
 			case Symbol::Reverse:
@@ -68,6 +70,7 @@ public:
 				break;
 		}
 
+
 		//imprimimos el color
 		switch (_color)
 		{
@@ -84,6 +87,30 @@ public:
 				std::cout << "Blue\n";
 				break;
 			default:
+				break;
+		}
+
+		std::cout <<  "\033[0;97m"; //reset to white
+	}
+
+	void ChangeColour(){
+		//cambia el color
+		switch (_color)
+		{
+			case Colors::Red:
+				std::cout <<  "\033[0;31m";
+				break;
+			case Colors::Yellow:
+				std::cout <<  "\033[0;33m";
+				break;
+			case Colors::Green:
+				std::cout <<  "\033[0;32m";
+				break;
+			case Colors::Blue:
+				std::cout <<  "\033[0;34m";
+				break;
+			default:
+				std::cout <<  "\033[0;95m";
 				break;
 		}
 	}
