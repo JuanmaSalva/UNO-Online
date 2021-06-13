@@ -1,6 +1,8 @@
 #include "Server.h"
 #include <cstdlib> 
 #include <algorithm>  
+#include <thread>
+
 #include "../Common/Play.h"
 
 Server::Server(const char *s, const char *p, int _numPlayers) : socket(s, p), numPlayers(_numPlayers)
@@ -96,20 +98,53 @@ void Server::SendInfo(){
 }
 
 void Server::WaitPlayer(){
-    SocketTCP indx = *clients[playerTurn].get(); 
+    SocketTCP* indx = clients[playerTurn].get(); 
     Play play;
 
-    if(indx.recv(play) == 0){
+    if(indx->recv(play) == 0){
         //terminamos el juego
-        inGame = false;
+
+        std::cout << "Se ha desconectado un jugador, esperando a que responda\n";
+
+        int cont = 0;
+        bool reconnected = false;
+
+        SocketTCP* sock = &socket;
+
+        std::thread threadConnection([&indx, &reconnected, &sock]()
+        { 
+            indx->closeConnection();
+            indx = sock->clientConnect();
+            reconnected = true;
+        });
+
+
+        //tiene un margen de 60 segundos para unirse de vuelta
+        //se hace un bucle de máximo 60 iteraciones, y cada iteración tiene 1 segundo
+        while (cont < 60 && !reconnected)
+        {
+            sleep(1);
+            cont++;
+        }
+        
+
+        //si no se ha llegado a conectar, se termina el juego
+        if(!reconnected) {
+            inGame = false;
+            threadConnection.detach();
+        }
+        else threadConnection.join();
     }
-    else {std::cout << "Se ha jugado una carta \n";
-        //le quitamos al jugador esa carta y la ponemos en el montón
-        usedCardsPile.push(players[playerTurn].getCard(play.getCardPlayed()));
-        topCard = usedCardsPile.back();
-        usedCardsPile.back().Print();
-        players[playerTurn].playCard(play.getCardPlayed());
-    }
+    
+    if(!inGame) return;
+
+    std::cout << "Se ha jugado una carta \n";
+    //le quitamos al jugador esa carta y la ponemos en el montón
+    usedCardsPile.push(players[playerTurn].getCard(play.getCardPlayed()));
+    topCard = usedCardsPile.back();
+    usedCardsPile.back().Print();
+    players[playerTurn].playCard(play.getCardPlayed());
+    
 
     playerTurn++;
     playerTurn %= numPlayers;

@@ -17,7 +17,7 @@ void Client::StartGame()
         
         switch (msg.type)
         {
-            case 0:
+            case 0: //se podría quitar pero de momento lo dejo por si se necesita más adelante
                 {
                     std::cout << "START\n";
                     break;

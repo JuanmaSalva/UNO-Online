@@ -95,6 +95,13 @@ SocketTCP *SocketTCP::clientConnect()
     socklen_t client_len = sizeof(struct sockaddr);
     int client_socket = accept(sd, &client, &client_len); //este es el socket q específico a esa conexión
 
+    if(client_socket < 0) 
+    {
+        std::cerr << "[client connect] error: " << strerror(errno) << "\n";
+        return nullptr;
+    }
+
+
     getnameinfo(&client, client_len, host, NI_MAXHOST, service, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV);
     std::cout << "Conexión desde: " << host << ":" << service << "\n";
 
