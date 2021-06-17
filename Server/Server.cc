@@ -148,13 +148,21 @@ void Server::WaitPlayer()
 				break;
 			case Symbols::Skip:
 				//Acabará avanzando el turno dos veces, saltando al jugador que iba siguiendo
-				advanceTurn();
+				playerTurn = nextPlayer();
+				break;
+			case Symbols::DrawTwo:
+				giveCards(nextPlayer(), 2);
+				playerTurn = nextPlayer();
+				break;
+			case Symbols::WildDrawFour:
+				giveCards(nextPlayer(), 4);
+				playerTurn = nextPlayer();
 				break;
 			default:
 				break;
 			}
 
-			advanceTurn();
+			playerTurn = nextPlayer();
 		}
 		else
 		{
@@ -174,15 +182,31 @@ void Server::EndGame()
 	}
 }
 
-void Server::advanceTurn()
+int Server::nextPlayer()
 {
 	if (ascendingOrder)
 	{
-		playerTurn++;
-		playerTurn %= numPlayers;
+		return (playerTurn + 1) % numPlayers;
 	}
 	else
 	{
-		playerTurn = (playerTurn == 0) ? numPlayers - 1 : playerTurn - 1;
+		return (playerTurn == 0) ? numPlayers - 1 : playerTurn - 1;
+	}
+}
+
+void Server::giveCards(int player, int numCards)
+{
+	//Dar cartas al jugador seleccionado de las disponibles en la pila de robar
+	for (int i = 0; i < numCards; i++)
+	{
+		players[player].addCard(cardsPile.front());
+		cardsPile.pop();
+
+		//Si se acaba la pila de robar, cambiar las pilas
+		if (cardsPile.empty())
+		{
+			cardsPile = usedCardsPile;
+			usedCardsPile = std::queue<Card>();
+		}
 	}
 }

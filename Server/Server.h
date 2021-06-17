@@ -35,7 +35,8 @@ private:
 
 	bool inGame = true;
 
-	void advanceTurn();
+	int nextPlayer();
+	void giveCards(int player, int numCards);
 
 	void InitCards();
 	void ConnectPlayers();
