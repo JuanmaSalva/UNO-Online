@@ -51,6 +51,10 @@ public:
 		return _color == other.getColor() || _color == Colors::Wild || other.getColor() == Colors::Wild;
 	}
 
+	bool isValidMatchup(Card &other) const{
+		return compareColors(other) || (_symbol == other.getSymbol());
+	}
+
 	void print()
 	{
 		//imprimimos el color

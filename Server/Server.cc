@@ -123,7 +123,7 @@ void Server::WaitPlayer()
 		std::cout << "Se ha jugado una carta \n";
 		Card playedCard = players[playerTurn].getCard(play.getCardPlayed());
 
-		if (topCard.compareColors(playedCard))
+		if (topCard.isValidMatchup(playedCard))
 		{
 			//le quitamos al jugador esa carta y la ponemos en el montón
 			//si la carta es wild, la carta que añadimos al monton es de ese tipo pero con otro color
