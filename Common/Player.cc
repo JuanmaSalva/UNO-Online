@@ -4,7 +4,7 @@
 
 Player::Player()
 {
-	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(uint8_t) * 2;
+	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(short) + sizeof(uint8_t);
 }
 
 void Player::to_bin()
@@ -16,7 +16,7 @@ void Player::to_bin()
 	char *tmp = _data;
 
 	Colors auxColor;
-	Symbol auxSymbol;
+	Symbols auxSymbol;
 	for (int i = 0; i < MAX_HAND_SIZE; i++)
 	{
 		//Color
@@ -26,8 +26,8 @@ void Player::to_bin()
 
 		//Symbol
 		auxSymbol = _playerHand[i].getSymbol();
-		memcpy(tmp, &auxSymbol, sizeof(Symbol));
-		tmp += sizeof(Symbol);
+		memcpy(tmp, &auxSymbol, sizeof(Symbols));
+		tmp += sizeof(Symbols);
 	}
 
 	//Top card
@@ -36,12 +36,12 @@ void Player::to_bin()
 	tmp += sizeof(Colors);
 
 	auxSymbol = _topCard.getSymbol();
-	memcpy(tmp, &auxSymbol, sizeof(Symbol));
-	tmp += sizeof(Symbol);
+	memcpy(tmp, &auxSymbol, sizeof(Symbols));
+	tmp += sizeof(Symbols);
 
 	//number of cards
-	memcpy(tmp, &numCards, sizeof(uint8_t));
-	tmp += sizeof(uint8_t);
+	memcpy(tmp, &numCards, sizeof(short));
+	tmp += sizeof(short);
 
 	//msg type
 	memcpy(tmp, &type, sizeof(uint8_t));
@@ -57,7 +57,7 @@ int Player::from_bin(char *data)
 	char *tmp = _data;
 
 	Colors auxColor;
-	Symbol auxSymbol;
+	Symbols auxSymbol;
 	for (int i = 0; i < MAX_HAND_SIZE; i++)
 	{
 		//Color
@@ -65,8 +65,8 @@ int Player::from_bin(char *data)
 		tmp += sizeof(Colors);
 
 		//Symbol
-		memcpy(&auxSymbol, tmp, sizeof(Symbol));
-		tmp += sizeof(Symbol);
+		memcpy(&auxSymbol, tmp, sizeof(Symbols));
+		tmp += sizeof(Symbols);
 
 		_playerHand[i] = Card(auxColor, auxSymbol);
 	}
@@ -76,14 +76,14 @@ int Player::from_bin(char *data)
 	tmp += sizeof(Colors);
 
 	//Symbol
-	memcpy(&auxSymbol, tmp, sizeof(Symbol));
-	tmp += sizeof(Symbol);
+	memcpy(&auxSymbol, tmp, sizeof(Symbols));
+	tmp += sizeof(Symbols);
 
 	_topCard = Card(auxColor, auxSymbol);
 
 	//number of cards
-	memcpy(&numCards, tmp, sizeof(uint8_t));
-	tmp += sizeof(uint8_t);
+	memcpy(&numCards, tmp, sizeof(short));
+	tmp += sizeof(short);
 
 	//msg type
 	memcpy(&type, tmp, sizeof(uint8_t));
@@ -103,7 +103,7 @@ void Player::Print()
 	std::cout << "\nYour cards are:\n";
 	for (int i = 0; i < numCards; i++)
 	{
-		std::cout << i+1 << ". ";
+		std::cout << i + 1 << ". ";
 		_playerHand[i].print();
 		std::cout << std::endl;
 	}
@@ -120,7 +120,7 @@ void Player::setTopCard(Card c)
 	_topCard = c;
 }
 
-void Player::playCard(uint8_t c)
+void Player::playCard(short c)
 {
 	//movemos todas las cartas desde c una posicion a la izquierda
 	for (int i = c; i < numCards; i++)
@@ -129,4 +129,15 @@ void Player::playCard(uint8_t c)
 	}
 
 	numCards--;
+}
+
+void Player::dumpCards()
+{
+	for (int i = 0; i < numCards; i++)
+	{
+		std::cout << i << ": ";
+		//_playerHand[i].print();
+		getCard(i).print();
+		std::cout << "\n";
+	}
 }

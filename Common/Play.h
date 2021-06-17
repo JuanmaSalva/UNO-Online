@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Serializable.h"
+#include "Cards.h"
 
 #include <string>
 #include <ostream>
@@ -8,17 +9,21 @@
 class Play : public Serializable
 {
 protected:
-    uint8_t cardPlayed;
-
+    short cardPlayed;
+	Colors chosenColor;
 public:
-    Play():Play(0){};
-	Play(uint8_t card);
+    Play():Play(0, Colors::Wild){};
+	Play(short card, Colors color);
 
 	void to_bin();
 
 	int from_bin(char *data);
 
-	uint8_t getCardPlayed(){
+	short getCardPlayed(){
 		return cardPlayed;
+	}
+
+	Colors getChosenColor(){
+		return chosenColor;
 	}
 };

@@ -1,10 +1,12 @@
 #include <iostream>
 
 #include "../Common/SocketTCP.h"
+class Player;
 
-class Client{
+class Client
+{
 public:
-    Client(const char * s, const char * p, const char * n):socket(s, p, true)
+    Client(const char *s, const char *p, const char *n) : socket(s, p, true)
     {
         //estamos ya conectados con el juego
     }
@@ -12,7 +14,7 @@ public:
     void StartGame();
 
     void Close();
-    void Turn();
+    void Turn(Player &gamestate);
 
 private:
     SocketTCP socket;

@@ -25,12 +25,12 @@ public:
 
 	void setTopCard(Card c);
 
-	Card getCard(uint8_t i)
+	Card getCard(short i)
 	{
 		return _playerHand[i];
 	}
 
-	void playCard(uint8_t c);
+	void playCard(short c);
 
 	enum MessageType
 	{
@@ -41,7 +41,8 @@ public:
 	};
 
 	uint8_t type;
-	uint8_t numCards = 0;
+	short numCards = 0;
 
 	void Print();
+	void dumpCards();
 };

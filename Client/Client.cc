@@ -4,58 +4,77 @@
 
 void Client::StartGame()
 {
-    //nos quedamos escuchando mensajes
-    std::cout << "Esperando a que empiece el juego\n";
+	//nos quedamos escuchando mensajes
+	std::cout << "Esperando a que empiece el juego\n";
 
-    while (inGame){
-        Player msg;
-        if(socket.recv(msg) == 0) 
-        {
-            inGame = false;
-            continue;
-        }
-        
-        switch (msg.type)
-        {
-            case 0:
-                {
-                    std::cout << "START\n";
-                    break;
-                }
-            case 1:
-                {
-                    std::cout << "INFO\n";
-                    msg.Print();
-                    break;
-                }
-            case 2:
-                {
-                    std::cout << "TURN\n";
-                    msg.Print();
-                    std::cout << "\nIt's your turn to play. Select which card you want to play\n";
-                    Turn();
-                    break;
-                }
-            case 3:
-                {
-                    std::cout << "END\n";
-                    inGame = false;
-                    break;
-                }
-            default:
-                break;
-        }
-    }
+	while (inGame)
+	{
+		Player msg;
+		if (socket.recv(msg) == 0)
+		{
+			inGame = false;
+			continue;
+		}
+
+		switch (msg.type)
+		{
+		case 0:
+		{
+			std::cout << "START\n";
+			break;
+		}
+		case 1:
+		{
+			std::cout << "INFO\n";
+			msg.Print();
+			break;
+		}
+		case 2:
+		{
+			std::cout << "TURN\n";
+			msg.Print();
+			std::cout << "\nIt's your turn to play. Select which card you want to play\n";
+			Turn(msg);
+			break;
+		}
+		case 3:
+		{
+			std::cout << "END\n";
+			inGame = false;
+			break;
+		}
+		default:
+			break;
+		}
+	}
 }
 
-void Client::Close(){
-    socket.closeConnection();
+void Client::Close()
+{
+	socket.closeConnection();
 }
 
-void Client::Turn(){
-    uint8_t c;
-    std::cin >> c;
-    
-    Play play = Play(c-1);
-    socket.send(play);
+void Client::Turn(Player &gamestate)
+{
+	Play play;
+	short c, colorchoice;
+	std::cin >> c;
+
+	if (gamestate.getCard(c - 1).getSymbol() == Symbols::Wild || gamestate.getCard(c - 1).getSymbol() == Symbols::WildDrawFour)
+	{
+		//Preguntar al jugador a que color quiere cambiar
+		do
+		{
+			std::cout << "What color do you want to change to? \n1. Red \n2. Yellow \n3. Green \n4. Blue\n";
+			std::cin >> colorchoice;
+		} while (colorchoice < 1 || colorchoice > 4);
+
+		play = Play(c - 1, Colors(colorchoice - 1));
+	}
+	else
+	{
+		play = Play(c - 1, gamestate.getCard(c - 1).getColor());
+	}
+
+	socket.send(play);
 }
