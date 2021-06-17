@@ -31,8 +31,11 @@ private:
 	int numPlayers;
 
 	int playerTurn = 0; //empieza jugando el jugador 0
+	bool ascendingOrder = true;
 
 	bool inGame = true;
+
+	void advanceTurn();
 
 	void InitCards();
 	void ConnectPlayers();

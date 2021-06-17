@@ -138,11 +138,23 @@ void Server::WaitPlayer()
 			}
 
 			topCard.print();
-
 			players[playerTurn].playCard(play.getCardPlayed());
 
-			playerTurn++;
-			playerTurn %= numPlayers;
+			switch (playedCard.getSymbol())
+			{
+			case Symbols::Reverse:
+				//Invierte el orden de turnos
+				ascendingOrder = !ascendingOrder;
+				break;
+			case Symbols::Skip:
+				//Acabará avanzando el turno dos veces, saltando al jugador que iba siguiendo
+				advanceTurn();
+				break;
+			default:
+				break;
+			}
+
+			advanceTurn();
 		}
 		else
 		{
@@ -159,5 +171,18 @@ void Server::EndGame()
 		SocketTCP indx = *clients[i].get();
 		players[i].type = Player::END;
 		indx.send(players[i]);
+	}
+}
+
+void Server::advanceTurn()
+{
+	if (ascendingOrder)
+	{
+		playerTurn++;
+		playerTurn %= numPlayers;
+	}
+	else
+	{
+		playerTurn = (playerTurn == 0) ? numPlayers - 1 : playerTurn - 1;
 	}
 }
