@@ -1,6 +1,8 @@
 #include "Server.h"
 #include <cstdlib>
 #include <algorithm>
+#include <thread>
+
 #include "../Common/Play.h"
 
 Server::Server(const char *s, const char *p, int _numPlayers) : socket(s, p), numPlayers(_numPlayers)
@@ -134,13 +136,43 @@ void Server::sendMatchEnd(short winner)
 
 void Server::WaitPlayer()
 {
-	SocketTCP indx = *clients[playerTurn].get();
+	SocketTCP* indx = clients[playerTurn].get();
 	Play play;
 
-	if (indx.recv(play) == 0)
+	if (indx->recv(play) == 0)
 	{
 		//terminamos el juego
-		sendMatchEnd(-1);
+		std::cout << "Se ha desconectado un jugador, esperando a que responda\n";
+
+        int cont = 0;
+        bool reconnected = false;
+
+        SocketTCP* sock = &socket;
+
+        std::thread threadConnection([&indx, &reconnected, &sock]()
+        { 
+            indx->closeConnection();
+            indx = sock->clientConnect();
+            reconnected = true;
+        });
+
+
+        //tiene un margen de 60 segundos para unirse de vuelta
+        //se hace un bucle de máximo 60 iteraciones, y cada iteración tiene 1 segundo
+        while (cont < 60 && !reconnected)
+        {
+            sleep(1);
+            cont++;
+        }
+
+
+        //si no se ha llegado a conectar, se termina el juego
+        if(!reconnected) {
+			sendMatchEnd(-1);
+            threadConnection.detach();
+        }
+        else threadConnection.join();
+
 	}
 	else
 	{
