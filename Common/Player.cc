@@ -4,7 +4,7 @@
 
 Player::Player()
 {
-	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(short) + sizeof(uint8_t);
+	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(short) + sizeof(MessageType);
 }
 
 void Player::to_bin()
@@ -44,8 +44,8 @@ void Player::to_bin()
 	tmp += sizeof(short);
 
 	//msg type
-	memcpy(tmp, &type, sizeof(uint8_t));
-	tmp += sizeof(uint8_t);
+	memcpy(tmp, &type, sizeof(MessageType));
+	tmp += sizeof(MessageType);
 }
 
 int Player::from_bin(char *data)
@@ -86,8 +86,8 @@ int Player::from_bin(char *data)
 	tmp += sizeof(short);
 
 	//msg type
-	memcpy(&type, tmp, sizeof(uint8_t));
-	tmp += sizeof(uint8_t);
+	memcpy(&type, tmp, sizeof(MessageType));
+	tmp += sizeof(MessageType);
 
 	return 0;
 }
@@ -107,6 +107,7 @@ void Player::Print()
 		_playerHand[i].print();
 		std::cout << std::endl;
 	}
+	std::cout << "0. Draw card" << std::endl;;
 }
 
 void Player::addCard(Card c)

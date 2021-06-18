@@ -34,15 +34,16 @@ public:
 
 	void playCard(short c);
 
-	enum MessageType
+	enum class MessageType : short
 	{
 		START = 0, //empieza la partida
 		INFO = 1,  //ha jugado otro juegador y se actualiza la carta que está arriba del mazo visible
 		TURN = 2,  //nos toca a nosotros
-		END = 3	   //se termina la partida
+		LOST = 3,  //perdemos turno
+		END = 4	   //se termina la partida
 	};
 
-	uint8_t type;
+	MessageType type;
 	short numCards = 0;
 
 	void Print();

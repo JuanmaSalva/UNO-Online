@@ -17,13 +17,11 @@ void Server::StartGame()
 {
 	//repartimos las cartas a los jugadores
 	DealCards();
-	SendInfo();
+	SendInfo(-1);
 
 	while (inGame)
 	{
 		WaitPlayer();
-		if (inGame)
-			SendInfo(); //antes de mandarlo miramo si seguimos en el juego
 	}
 
 	socket.closeConnection();
@@ -91,19 +89,24 @@ void Server::DealCards()
 	cardsPile.pop();
 }
 
-void Server::SendInfo()
+void Server::SendInfo(int lostTurn)
 {
 	//manda un mensaje a todo el mundo de la información de la partida, y al que le toca el turno le manda un mensaje especial
 	std::cout << "Sending info\n";
+	std::cout << "player " << lostTurn << " lost their turn, it's player " << playerTurn << "'s turn\n";
 	for (int i = 0; i < clients.size(); i++)
 	{
 		SocketTCP indx = *clients[i].get();
 		//les mandamos un mensaje a todos de que empieza el juego (antes de esto tenemos que asegurarnos de repartir las cartas)
-		if (i != playerTurn)
-			players[i].type = Player::INFO;
+		if (i != playerTurn && i != lostTurn)
+			players[i].type = Player::MessageType::INFO;
+		else if (i == lostTurn) //Nos habiamos saltado el turno del jugador, hay que avisarle de ello
+			players[i].type = Player::MessageType::LOST;
 		else
-			players[i].type = Player::TURN;
+			players[i].type = Player::MessageType::TURN;
+
 		players[i].setTopCard(topCard);
+		std::cout << "sending " << i << " msg type " << (short)players[i].type << "\n";
 		indx.send(players[i]);
 	}
 }
@@ -120,11 +123,14 @@ void Server::WaitPlayer()
 	}
 	else
 	{
+		int lostIndex = -1;
+
 		std::cout << "Se ha jugado una carta \n";
 		Card playedCard = players[playerTurn].getCard(play.getCardPlayed());
 
 		if (topCard.isValidMatchup(playedCard))
 		{
+			
 			//le quitamos al jugador esa carta y la ponemos en el montón
 			//si la carta es wild, la carta que añadimos al monton es de ese tipo pero con otro color
 			usedCardsPile.push(playedCard);
@@ -148,14 +154,17 @@ void Server::WaitPlayer()
 				break;
 			case Symbols::Skip:
 				//Acabará avanzando el turno dos veces, saltando al jugador que iba siguiendo
+				lostIndex = nextPlayer();
 				playerTurn = nextPlayer();
 				break;
 			case Symbols::DrawTwo:
 				giveCards(nextPlayer(), 2);
+				lostIndex = nextPlayer();
 				playerTurn = nextPlayer();
 				break;
 			case Symbols::WildDrawFour:
 				giveCards(nextPlayer(), 4);
+				lostIndex = nextPlayer();
 				playerTurn = nextPlayer();
 				break;
 			default:
@@ -164,10 +173,11 @@ void Server::WaitPlayer()
 
 			playerTurn = nextPlayer();
 		}
-		else
-		{
-			//Movimiento invalido, le volvemos a preguntar al jugador qué quiere hacer
-		}
+		//Else implícito
+		//El cliente debería manejar movimientos inválidos, por lo que si nos llega un movimiento inválido es por manipulación de mensajes
+		//no hacemos ningun handling especial, volvemos a promptear a los clientes con el mismo mensaje y no avanzamos turno
+
+		SendInfo(lostIndex);
 	}
 }
 
@@ -177,7 +187,7 @@ void Server::EndGame()
 	for (int i = 0; i < clients.size(); i++)
 	{
 		SocketTCP indx = *clients[i].get();
-		players[i].type = Player::END;
+		players[i].type = Player::MessageType::END;
 		indx.send(players[i]);
 	}
 }

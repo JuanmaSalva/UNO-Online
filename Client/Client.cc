@@ -18,18 +18,18 @@ void Client::StartGame()
 
 		switch (msg.type)
 		{
-		case 0:
+		case Player::MessageType::START:
 		{
 			std::cout << "START\n";
 			break;
 		}
-		case 1:
+		case Player::MessageType::INFO:
 		{
 			std::cout << "INFO\n";
 			msg.Print();
 			break;
 		}
-		case 2:
+		case Player::MessageType::TURN:
 		{
 			std::cout << "TURN\n";
 			msg.Print();
@@ -37,7 +37,14 @@ void Client::StartGame()
 			Turn(msg);
 			break;
 		}
-		case 3:
+		case Player::MessageType::LOST:
+		{
+			std::cout << "SKIPPED\n";
+			msg.Print();
+			std::cout << "\nYour turn was skipped!\n";
+			break;
+		}
+		case Player::MessageType::END:
 		{
 			std::cout << "END\n";
 			inGame = false;
@@ -61,7 +68,7 @@ void Client::Turn(Player &gamestate)
 	Card topCard = gamestate.getTopCard();
 
 	std::cin >> c;
-	while(c < 0 || c >= gamestate.numCards || !gamestate.getCard(c-1).isValidMatchup(topCard)){
+	while(c <= 0 || c > gamestate.numCards || !gamestate.getCard(c-1).isValidMatchup(topCard)){
 		std::cout << "Choice invalid, choose a card that matches color, symbol or play a wild card\n";
 		std::cin >> c;
 	}

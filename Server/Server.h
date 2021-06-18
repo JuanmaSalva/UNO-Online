@@ -42,6 +42,6 @@ private:
 	void ConnectPlayers();
 	void DealCards();
 
-	void SendInfo();
+	void SendInfo(int lostTurn);
 	void WaitPlayer();
 };
