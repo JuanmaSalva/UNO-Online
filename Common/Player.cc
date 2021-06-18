@@ -4,7 +4,7 @@
 
 Player::Player()
 {
-	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(short) + sizeof(MessageType);
+	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(short) * 3;
 }
 
 void Player::to_bin()
@@ -39,13 +39,17 @@ void Player::to_bin()
 	memcpy(tmp, &auxSymbol, sizeof(Symbols));
 	tmp += sizeof(Symbols);
 
-	//number of cards
+	//numero de cartas
 	memcpy(tmp, &numCards, sizeof(short));
 	tmp += sizeof(short);
 
-	//msg type
+	//tipo de mensaje
 	memcpy(tmp, &type, sizeof(MessageType));
 	tmp += sizeof(MessageType);
+
+	//Valor auxiliar de mensaje
+	memcpy(tmp, &extraInfo, sizeof(extraInfo));
+	tmp += sizeof(extraInfo);
 }
 
 int Player::from_bin(char *data)
@@ -81,13 +85,17 @@ int Player::from_bin(char *data)
 
 	_topCard = Card(auxColor, auxSymbol);
 
-	//number of cards
+	//numero de cartas
 	memcpy(&numCards, tmp, sizeof(short));
 	tmp += sizeof(short);
 
-	//msg type
+	//tipo de mensaje
 	memcpy(&type, tmp, sizeof(MessageType));
 	tmp += sizeof(MessageType);
+
+	//Valor auxiliar de mensaje
+	memcpy(&extraInfo, tmp, sizeof(extraInfo));
+	tmp += sizeof(extraInfo);
 
 	return 0;
 }

@@ -5,11 +5,11 @@
 
 Server::Server(const char *s, const char *p, int _numPlayers) : socket(s, p), numPlayers(_numPlayers)
 {
-	std::cout << "Creando el servidor del Uno\n";
+	std::cout << "Creating server for " << numPlayers << " players\n";
 	ConnectPlayers();
 
 	system("clear");
-	std::cout << "Empieza la partida\n";
+	std::cout << "Match is starting\n";
 	InitCards();
 };
 
@@ -39,7 +39,7 @@ void Server::ConnectPlayers()
 
 		connectedPlayers++;
 		players.push_back(Player());
-		std::cout << "Jugadores restantes: " << connectedPlayers << "\n";
+		std::cout << "Jugadores faltantes: " << numPlayers - connectedPlayers << "\n";
 	}
 }
 
@@ -92,7 +92,6 @@ void Server::DealCards()
 void Server::SendInfo(int lostTurn)
 {
 	//manda un mensaje a todo el mundo de la información de la partida, y al que le toca el turno le manda un mensaje especial
-	std::cout << "Sending info\n";
 	//std::cout << "player " << lostTurn << " lost their turn, it's player " << playerTurn << "'s turn\n";
 	for (int i = 0; i < clients.size(); i++)
 	{
@@ -111,6 +110,28 @@ void Server::SendInfo(int lostTurn)
 	}
 }
 
+void Server::sendMatchEnd(short winner)
+{
+	inGame = false;
+
+	for (int i = 0; i < clients.size(); i++)
+	{
+		SocketTCP indx = *clients[i].get();
+		//Enviamos a todos los jugadores un mensaje de fin con la info extra de quien gana
+		players[i].type = Player::MessageType::END;
+
+		if (i == winner)
+		{
+			players[i].extraInfo = 999;
+		}
+		else
+		{
+			players[i].extraInfo = winner;
+		}
+		indx.send(players[i]);
+	}
+}
+
 void Server::WaitPlayer()
 {
 	SocketTCP indx = *clients[playerTurn].get();
@@ -119,13 +140,12 @@ void Server::WaitPlayer()
 	if (indx.recv(play) == 0)
 	{
 		//terminamos el juego
-		inGame = false;
+		sendMatchEnd(-1);
 	}
 	else
 	{
 		int lostIndex = -1;
 
-		std::cout << "Se ha jugado una carta \n";
 		if (play.getCardPlayed() == -1)
 		{
 			//El jugador ha robado carta
@@ -151,8 +171,13 @@ void Server::WaitPlayer()
 					topCard = usedCardsPile.back();
 				}
 
-				topCard.print();
 				players[playerTurn].playCard(play.getCardPlayed());
+				std::cout << "Player " << playerTurn << " played ";
+				topCard.print();
+				std::cout << " - " << players[playerTurn].numCards << " remaining.\n";
+
+				if (players[playerTurn].numCards == 0)
+					sendMatchEnd(playerTurn);
 
 				switch (playedCard.getSymbol())
 				{
@@ -185,7 +210,9 @@ void Server::WaitPlayer()
 			//El cliente debería manejar movimientos inválidos, por lo que si nos llega un movimiento inválido es por manipulación de mensajes
 			//no hacemos ningun handling especial, volvemos a promptear a los clientes con el mismo mensaje y no avanzamos turno
 		}
-		SendInfo(lostIndex);
+
+		if (inGame)
+			SendInfo(lostIndex);
 	}
 }
 

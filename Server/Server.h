@@ -43,5 +43,6 @@ private:
 	void DealCards();
 
 	void SendInfo(int lostTurn);
+	void sendMatchEnd(short winner);
 	void WaitPlayer();
 };

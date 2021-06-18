@@ -46,6 +46,14 @@ public:
 	MessageType type;
 	short numCards = 0;
 
+	/*
+		Cuando se usa para fin de partida:
+		-1: Cerrada inesperadamente
+		0-8: Gana ese jugador
+		999: Tu eres el ganador
+	*/
+	short extraInfo;
+
 	void Print();
 	void dumpCards();
 };
