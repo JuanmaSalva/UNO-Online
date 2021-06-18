@@ -172,8 +172,18 @@ void Server::WaitPlayer(){
         }
         else threadConnection.join();
     }
+    else {
     
-    if(!inGame) return;
+    int lostIndex = -1;
+
+		if (play.getCardPlayed() == -1)
+		{
+			//El jugador ha robado carta
+			giveCards(playerTurn, 1);
+			playerTurn = nextPlayer();
+		}
+		else
+		{
 
 			Card playedCard = players[playerTurn].getCard(play.getCardPlayed());
 
@@ -230,6 +240,11 @@ void Server::WaitPlayer(){
 			//Else implícito
 			//El cliente debería manejar movimientos inválidos, por lo que si nos llega un movimiento inválido es por manipulación de mensajes
 			//no hacemos ningun handling especial, volvemos a promptear a los clientes con el mismo mensaje y no avanzamos turno
+    }
+
+		if (inGame)
+			SendInfo(lostIndex);
+    }
 }
 
 void Server::EndGame(){
