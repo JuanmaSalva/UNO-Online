@@ -1,8 +1,9 @@
 #include "Play.h"
 
-Play::Play(uint8_t card){
+Play::Play(uint8_t card)
+{
 	_size = sizeof(uint8_t);
-    cardPlayed = card;
+	cardPlayed = card;
 }
 
 void Play::to_bin()
@@ -28,5 +29,5 @@ int Play::from_bin(char *data)
 	memcpy(&cardPlayed, tmp, sizeof(cardPlayed));
 	tmp += sizeof(cardPlayed);
 
-    return 0;
+	return 0;
 }

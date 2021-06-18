@@ -46,10 +46,7 @@ void Player::to_bin()
 	//number of cards
 	memcpy(tmp, &numCards, sizeof(uint8_t));
 	tmp += sizeof(uint8_t);
-
-	
 }
-
 
 int Player::from_bin(char *data)
 {
@@ -95,7 +92,6 @@ int Player::from_bin(char *data)
 	return 0;
 }
 
-
 void Player::Print()
 {
 	system("clear");
@@ -104,25 +100,30 @@ void Player::Print()
 	_topCard.Print();
 
 	std::cout << "\nYour cards are:\n";
-	for(int i=0; i<numCards;i++){
+	for (int i = 0; i < numCards; i++)
+	{
 		_playerHand[i].Print();
 	}
 }
 
-void Player::addCard(Card c){
+void Player::addCard(Card c)
+{
 	_playerHand[numCards] = c;
 	numCards++;
 }
 
-void Player::setTopCard(Card c){
+void Player::setTopCard(Card c)
+{
 	_topCard = c;
 }
 
-void Player::playCard(uint8_t c){
+void Player::playCard(uint8_t c)
+{
 	//movemos todas las cartas desde c una posicion a la izquierda
-	for(int i = c; i<numCards; i++){
-		_playerHand[i] = _playerHand[i+1];
+	for (int i = c; i < numCards; i++)
+	{
+		_playerHand[i] = _playerHand[i + 1];
 	}
-	
+
 	numCards--;
 }
