@@ -115,7 +115,8 @@ void Player::Print()
 		_playerHand[i].print();
 		std::cout << std::endl;
 	}
-	std::cout << "0. Draw card" << std::endl;;
+
+	std::cout << "0. Draw card" << std::endl;
 }
 
 void Player::addCard(Card c)

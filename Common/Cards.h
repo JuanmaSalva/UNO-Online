@@ -51,12 +51,15 @@ public:
 		return _color == other.getColor() || _color == Colors::Wild || other.getColor() == Colors::Wild;
 	}
 
-	bool isValidMatchup(Card &other) const{
+	bool isValidMatchup(Card &other) const
+	{
 		return compareColors(other) || (_symbol == other.getSymbol());
 	}
 
 	void print()
 	{
+		changeColor();
+
 		//imprimimos el color
 		switch (_color)
 		{
@@ -97,6 +100,31 @@ public:
 			break;
 		default:
 			std::cout << (int)_symbol << " ";
+			break;
+		}
+
+		std::cout << "\033[0;97m"; //Vuelve a poner el color en blanco
+	}
+
+	void changeColor()
+	{
+		//cambia el color de la consola
+		switch (_color)
+		{
+		case Colors::Red:
+			std::cout << "\033[0;31m";
+			break;
+		case Colors::Yellow:
+			std::cout << "\033[0;33m";
+			break;
+		case Colors::Green:
+			std::cout << "\033[0;32m";
+			break;
+		case Colors::Blue:
+			std::cout << "\033[0;34m";
+			break;
+		default:
+			std::cout << "\033[0;95m";
 			break;
 		}
 	}

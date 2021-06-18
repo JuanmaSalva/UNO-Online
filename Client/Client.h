@@ -6,20 +6,20 @@ class Player;
 class Client
 {
 public:
-    Client(const char *s, const char *p, const char *n) : socket(s, p, true)
-    {
-        //estamos ya conectados con el juego
-    }
+	Client(const char *s, const char *p, const char *n) : socket(s, p, true)
+	{
+		//estamos ya conectados con el juego
+	}
 
-    void StartGame();
+	void StartGame();
 
-    void Close();
-    void Turn(Player &gamestate);
+	void Close();
+	void Turn(Player &gamestate);
 
 private:
-    SocketTCP socket;
+	SocketTCP socket;
 
-    std::string nombre;
+	std::string nombre;
 
-    bool inGame = true;
+	bool inGame = true;
 };
