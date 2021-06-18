@@ -4,7 +4,7 @@
 
 Player::Player()
 {
-	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(short) * 3;
+	_size = (MAX_HAND_SIZE + 1) * sizeof(Card) + sizeof(uint8_t) * 3;
 }
 
 void Player::to_bin()
@@ -16,7 +16,7 @@ void Player::to_bin()
 	char *tmp = _data;
 
 	Colors auxColor;
-	Symbols auxSymbol;
+	Symbol auxSymbol;
 	for (int i = 0; i < MAX_HAND_SIZE; i++)
 	{
 		//Color
@@ -26,8 +26,8 @@ void Player::to_bin()
 
 		//Symbol
 		auxSymbol = _playerHand[i].getSymbol();
-		memcpy(tmp, &auxSymbol, sizeof(Symbols));
-		tmp += sizeof(Symbols);
+		memcpy(tmp, &auxSymbol, sizeof(Symbol));
+		tmp += sizeof(Symbol);
 	}
 
 	//Top card
@@ -36,20 +36,18 @@ void Player::to_bin()
 	tmp += sizeof(Colors);
 
 	auxSymbol = _topCard.getSymbol();
-	memcpy(tmp, &auxSymbol, sizeof(Symbols));
-	tmp += sizeof(Symbols);
+	memcpy(tmp, &auxSymbol, sizeof(Symbol));
+	tmp += sizeof(Symbol);
 
-	//numero de cartas
-	memcpy(tmp, &numCards, sizeof(short));
-	tmp += sizeof(short);
+	//msg type
+	memcpy(tmp, &type, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
 
-	//tipo de mensaje
-	memcpy(tmp, &type, sizeof(MessageType));
-	tmp += sizeof(MessageType);
+	//number of cards
+	memcpy(tmp, &numCards, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
 
-	//Valor auxiliar de mensaje
-	memcpy(tmp, &extraInfo, sizeof(extraInfo));
-	tmp += sizeof(extraInfo);
+	
 }
 
 
@@ -62,7 +60,7 @@ int Player::from_bin(char *data)
 	char *tmp = _data;
 
 	Colors auxColor;
-	Symbols auxSymbol;
+	Symbol auxSymbol;
 	for (int i = 0; i < MAX_HAND_SIZE; i++)
 	{
 		//Color
@@ -70,8 +68,8 @@ int Player::from_bin(char *data)
 		tmp += sizeof(Colors);
 
 		//Symbol
-		memcpy(&auxSymbol, tmp, sizeof(Symbols));
-		tmp += sizeof(Symbols);
+		memcpy(&auxSymbol, tmp, sizeof(Symbol));
+		tmp += sizeof(Symbol);
 
 		_playerHand[i] = Card(auxColor, auxSymbol);
 	}
@@ -81,73 +79,50 @@ int Player::from_bin(char *data)
 	tmp += sizeof(Colors);
 
 	//Symbol
-	memcpy(&auxSymbol, tmp, sizeof(Symbols));
-	tmp += sizeof(Symbols);
+	memcpy(&auxSymbol, tmp, sizeof(Symbol));
+	tmp += sizeof(Symbol);
 
 	_topCard = Card(auxColor, auxSymbol);
 
-	//numero de cartas
-	memcpy(&numCards, tmp, sizeof(short));
-	tmp += sizeof(short);
+	//msg type
+	memcpy(&type, tmp, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
 
-	//tipo de mensaje
-	memcpy(&type, tmp, sizeof(MessageType));
-	tmp += sizeof(MessageType);
-
-	//Valor auxiliar de mensaje
-	memcpy(&extraInfo, tmp, sizeof(extraInfo));
-	tmp += sizeof(extraInfo);
+	//number of cards
+	memcpy(&numCards, tmp, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
 
 	return 0;
 }
+
 
 void Player::Print()
 {
 	system("clear");
 
 	std::cout << "Top card on the pile: ";
-	_topCard.print();
-	std::cout << std::endl;
+	_topCard.Print();
 
 	std::cout << "\nYour cards are:\n";
-	for (int i = 0; i < numCards; i++)
-	{
-		std::cout << i + 1 << ". ";
-		_playerHand[i].print();
-		std::cout << std::endl;
+	for(int i=0; i<numCards;i++){
+		_playerHand[i].Print();
 	}
-	std::cout << "0. Draw card" << std::endl;;
 }
 
-void Player::addCard(Card c)
-{
+void Player::addCard(Card c){
 	_playerHand[numCards] = c;
 	numCards++;
 }
 
-void Player::setTopCard(Card c)
-{
+void Player::setTopCard(Card c){
 	_topCard = c;
 }
 
-void Player::playCard(short c)
-{
+void Player::playCard(uint8_t c){
 	//movemos todas las cartas desde c una posicion a la izquierda
-	for (int i = c; i < numCards; i++)
-	{
-		_playerHand[i] = _playerHand[i + 1];
+	for(int i = c; i<numCards; i++){
+		_playerHand[i] = _playerHand[i+1];
 	}
-
+	
 	numCards--;
-}
-
-void Player::dumpCards()
-{
-	for (int i = 0; i < numCards; i++)
-	{
-		std::cout << i << ": ";
-		//_playerHand[i].print();
-		getCard(i).print();
-		std::cout << "\n";
-	}
 }

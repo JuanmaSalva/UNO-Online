@@ -26,35 +26,22 @@ public:
 
 	void setTopCard(Card c);
 
-	Card getTopCard() { return _topCard; }
-
-	Card getCard(short i)
-	{
+	Card getCard(uint8_t i){
 		return _playerHand[i];
 	}
 
-	void playCard(short c);
+	void playCard(uint8_t c);
 
-	enum class MessageType : short
-	{
-		START = 0, //empieza la partida
-		INFO = 1,  //ha jugado otro juegador y se actualiza la carta que está arriba del mazo visible
-		TURN = 2,  //nos toca a nosotros
-		LOST = 3,  //perdemos turno
-		END = 4	   //se termina la partida
-	};
+	enum MessageType
+    {
+        START   = 0, //empieza la partida
+        INFO = 1, //ha jugado otro juegador y se actualiza la carta que está arriba del mazo visible
+        TURN  = 2, //nos toca a nosotros
+		END = 3 //se termina la partida
+    };
 
-	MessageType type;
-	short numCards = 0;
-
-	/*
-		Cuando se usa para fin de partida:
-		-1: Cerrada inesperadamente
-		0-8: Gana ese jugador
-		999: Tu eres el ganador
-	*/
-	short extraInfo;
+    uint8_t type;
+	uint8_t numCards = 0;
 
 	void Print();
-	void dumpCards();
 };

@@ -1,9 +1,8 @@
 #include "Play.h"
 
-Play::Play(short card, Colors color){
-	_size = sizeof(short) + sizeof(Colors);
+Play::Play(uint8_t card){
+	_size = sizeof(uint8_t);
     cardPlayed = card;
-	chosenColor = color;
 }
 
 void Play::to_bin()
@@ -14,11 +13,8 @@ void Play::to_bin()
 
 	char *tmp = _data;
 
-	memcpy(tmp, &cardPlayed, sizeof(cardPlayed));
-	tmp += sizeof(cardPlayed);
-
-	memcpy(tmp, &chosenColor, sizeof(Colors));
-	tmp += sizeof(Colors);
+	memcpy(tmp, &cardPlayed, sizeof(uint8_t));
+	tmp += sizeof(uint8_t);
 }
 
 int Play::from_bin(char *data)
@@ -31,9 +27,6 @@ int Play::from_bin(char *data)
 
 	memcpy(&cardPlayed, tmp, sizeof(cardPlayed));
 	tmp += sizeof(cardPlayed);
-
-	memcpy(&chosenColor, tmp, sizeof(Colors));
-	tmp += sizeof(Colors);
 
     return 0;
 }
