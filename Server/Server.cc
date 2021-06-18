@@ -93,7 +93,7 @@ void Server::SendInfo(int lostTurn)
 {
 	//manda un mensaje a todo el mundo de la información de la partida, y al que le toca el turno le manda un mensaje especial
 	std::cout << "Sending info\n";
-	std::cout << "player " << lostTurn << " lost their turn, it's player " << playerTurn << "'s turn\n";
+	//std::cout << "player " << lostTurn << " lost their turn, it's player " << playerTurn << "'s turn\n";
 	for (int i = 0; i < clients.size(); i++)
 	{
 		SocketTCP indx = *clients[i].get();
@@ -106,7 +106,7 @@ void Server::SendInfo(int lostTurn)
 			players[i].type = Player::MessageType::TURN;
 
 		players[i].setTopCard(topCard);
-		std::cout << "sending " << i << " msg type " << (short)players[i].type << "\n";
+		//std::cout << "sending " << i << " msg type " << (short)players[i].type << "\n";
 		indx.send(players[i]);
 	}
 }
@@ -126,57 +126,65 @@ void Server::WaitPlayer()
 		int lostIndex = -1;
 
 		std::cout << "Se ha jugado una carta \n";
-		Card playedCard = players[playerTurn].getCard(play.getCardPlayed());
-
-		if (topCard.isValidMatchup(playedCard))
+		if (play.getCardPlayed() == -1)
 		{
-			
-			//le quitamos al jugador esa carta y la ponemos en el montón
-			//si la carta es wild, la carta que añadimos al monton es de ese tipo pero con otro color
-			usedCardsPile.push(playedCard);
-			if (playedCard.getSymbol() == Symbols::Wild || playedCard.getSymbol() == Symbols::WildDrawFour)
-			{
-				topCard = Card(play.getChosenColor(), playedCard.getSymbol());
-			}
-			else
-			{
-				topCard = usedCardsPile.back();
-			}
-
-			topCard.print();
-			players[playerTurn].playCard(play.getCardPlayed());
-
-			switch (playedCard.getSymbol())
-			{
-			case Symbols::Reverse:
-				//Invierte el orden de turnos
-				ascendingOrder = !ascendingOrder;
-				break;
-			case Symbols::Skip:
-				//Acabará avanzando el turno dos veces, saltando al jugador que iba siguiendo
-				lostIndex = nextPlayer();
-				playerTurn = nextPlayer();
-				break;
-			case Symbols::DrawTwo:
-				giveCards(nextPlayer(), 2);
-				lostIndex = nextPlayer();
-				playerTurn = nextPlayer();
-				break;
-			case Symbols::WildDrawFour:
-				giveCards(nextPlayer(), 4);
-				lostIndex = nextPlayer();
-				playerTurn = nextPlayer();
-				break;
-			default:
-				break;
-			}
-
+			//El jugador ha robado carta
+			giveCards(playerTurn, 1);
 			playerTurn = nextPlayer();
 		}
-		//Else implícito
-		//El cliente debería manejar movimientos inválidos, por lo que si nos llega un movimiento inválido es por manipulación de mensajes
-		//no hacemos ningun handling especial, volvemos a promptear a los clientes con el mismo mensaje y no avanzamos turno
+		else
+		{
+			Card playedCard = players[playerTurn].getCard(play.getCardPlayed());
 
+			if (topCard.isValidMatchup(playedCard))
+			{
+
+				//le quitamos al jugador esa carta y la ponemos en el montón
+				//si la carta es wild, la carta que añadimos al monton es de ese tipo pero con otro color
+				usedCardsPile.push(playedCard);
+				if (playedCard.getSymbol() == Symbols::Wild || playedCard.getSymbol() == Symbols::WildDrawFour)
+				{
+					topCard = Card(play.getChosenColor(), playedCard.getSymbol());
+				}
+				else
+				{
+					topCard = usedCardsPile.back();
+				}
+
+				topCard.print();
+				players[playerTurn].playCard(play.getCardPlayed());
+
+				switch (playedCard.getSymbol())
+				{
+				case Symbols::Reverse:
+					//Invierte el orden de turnos
+					ascendingOrder = !ascendingOrder;
+					break;
+				case Symbols::Skip:
+					//Acabará avanzando el turno dos veces, saltando al jugador que iba siguiendo
+					lostIndex = nextPlayer();
+					playerTurn = nextPlayer();
+					break;
+				case Symbols::DrawTwo:
+					giveCards(nextPlayer(), 2);
+					lostIndex = nextPlayer();
+					playerTurn = nextPlayer();
+					break;
+				case Symbols::WildDrawFour:
+					giveCards(nextPlayer(), 4);
+					lostIndex = nextPlayer();
+					playerTurn = nextPlayer();
+					break;
+				default:
+					break;
+				}
+
+				playerTurn = nextPlayer();
+			}
+			//Else implícito
+			//El cliente debería manejar movimientos inválidos, por lo que si nos llega un movimiento inválido es por manipulación de mensajes
+			//no hacemos ningun handling especial, volvemos a promptear a los clientes con el mismo mensaje y no avanzamos turno
+		}
 		SendInfo(lostIndex);
 	}
 }

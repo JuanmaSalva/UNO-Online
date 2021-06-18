@@ -68,12 +68,16 @@ void Client::Turn(Player &gamestate)
 	Card topCard = gamestate.getTopCard();
 
 	std::cin >> c;
-	while(c <= 0 || c > gamestate.numCards || !gamestate.getCard(c-1).isValidMatchup(topCard)){
+	while(c < 0 || c > gamestate.numCards || (c != 0 && !gamestate.getCard(c-1).isValidMatchup(topCard))){
 		std::cout << "Choice invalid, choose a card that matches color, symbol or play a wild card\n";
 		std::cin >> c;
 	}
 
-	if (gamestate.getCard(c - 1).getSymbol() == Symbols::Wild || gamestate.getCard(c - 1).getSymbol() == Symbols::WildDrawFour)
+	if(c == 0){
+		//El jugador quiere robar carta
+		play = Play(-1,Colors::Wild);
+	}
+	else if (gamestate.getCard(c - 1).getSymbol() == Symbols::Wild || gamestate.getCard(c - 1).getSymbol() == Symbols::WildDrawFour)
 	{
 		//Preguntar al jugador a que color quiere cambiar
 		do
