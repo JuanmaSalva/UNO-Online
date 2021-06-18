@@ -25,6 +25,8 @@ public:
 
 	void setTopCard(Card c);
 
+	Card getTopCard() { return _topCard; }
+
 	Card getCard(short i)
 	{
 		return _playerHand[i];

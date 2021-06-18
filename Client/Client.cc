@@ -33,7 +33,7 @@ void Client::StartGame()
 		{
 			std::cout << "TURN\n";
 			msg.Print();
-			std::cout << "\nIt's your turn to play. Select which card you want to play\n";
+			std::cout << "\nIt's your turn to play.\nSelect which card you want to play: ";
 			Turn(msg);
 			break;
 		}
@@ -56,9 +56,15 @@ void Client::Close()
 
 void Client::Turn(Player &gamestate)
 {
-	Play play;
 	short c, colorchoice;
+	Play play;
+	Card topCard = gamestate.getTopCard();
+
 	std::cin >> c;
+	while(c < 0 || c >= gamestate.numCards || !gamestate.getCard(c-1).isValidMatchup(topCard)){
+		std::cout << "Choice invalid, choose a card that matches color, symbol or play a wild card\n";
+		std::cin >> c;
+	}
 
 	if (gamestate.getCard(c - 1).getSymbol() == Symbols::Wild || gamestate.getCard(c - 1).getSymbol() == Symbols::WildDrawFour)
 	{
