@@ -43,7 +43,8 @@ SocketTCP::SocketTCP(const char *address, const char *port, bool isClient)
 
         //Nos aseguramos de poder rehostear en la misma IP
         int option = 1;
-        if(setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) != 0){
+        if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) != 0)
+        {
             std::cerr << "[setsockopt] error: " << strerror(errno) << "\n";
             return;
         }
@@ -95,10 +96,12 @@ SocketTCP *SocketTCP::clientConnect(std::string ipDest)
     socklen_t client_len = sizeof(struct sockaddr);
     int client_socket;
 
-    do{
+    do
+    {
         client_socket = accept(sd, &client, &client_len); //este es el socket q específico a esa conexión
 
-        if(client_socket < 0){
+        if (client_socket < 0)
+        {
             std::cerr << "[client connect] error: " << strerror(errno) << "\n";
             return nullptr;
         }
@@ -111,19 +114,19 @@ SocketTCP *SocketTCP::clientConnect(std::string ipDest)
     return new SocketTCP(client, client_len, client_socket);
 }
 
-
 int SocketTCP::recv(Serializable &obj)
 {
     char buffer[MAX_MESSAGE_SIZE];
     ssize_t bytes = ::recv(sd, buffer, sizeof(buffer), 0);
 
-    if(bytes < 0){
+    if (bytes < 0)
+    {
         std::cerr << "[recv] error: " << strerror(errno) << "\n";
     }
 
-    if(bytes == 0)
-        std::cout << "Se ha cerrado la conexión\n";
-    else 
+    if (bytes == 0)
+        std::cout << "The connection was closed.\n";
+    else
         obj.from_bin(buffer);
 
     //std::cout << "Mensaje recibido\n";
@@ -136,32 +139,33 @@ int SocketTCP::send(Serializable &obj)
 
     int bytes = ::send(sd, obj.data(), obj.size(), 0);
 
-    if(bytes < 0 )
+    if (bytes < 0)
         std::cerr << "[send] error: " << strerror(errno) << "\n";
-    
+
     return bytes;
 }
 
-bool operator == (const SocketTCP &s1, const SocketTCP &s2)
+bool operator==(const SocketTCP &s1, const SocketTCP &s2)
 {
     //en memoria un sockaddr_in es lo mismo que un sockaddr
-    const struct sockaddr_in* a = (const struct sockaddr_in*)&s1.sa;
-    const struct sockaddr_in* b = (const struct sockaddr_in*)&s2.sa;
+    const struct sockaddr_in *a = (const struct sockaddr_in *)&s1.sa;
+    const struct sockaddr_in *b = (const struct sockaddr_in *)&s2.sa;
 
     //Complos campos sin_family, sin_addr.s_addr y sin_port
     //de la estructura sockaddr_in de los Sockets s1 y s2
     //Retornar falarar se si alguno difiere
-    if(a->sin_family == b->sin_family && a->sin_addr.s_addr == b->sin_addr.s_addr && a->sin_port == b->sin_port)
-     return true;
-    else return false;
+    if (a->sin_family == b->sin_family && a->sin_addr.s_addr == b->sin_addr.s_addr && a->sin_port == b->sin_port)
+        return true;
+    else
+        return false;
 };
 
-std::ostream& operator<<(std::ostream& os, const SocketTCP& dt)
+std::ostream &operator<<(std::ostream &os, const SocketTCP &dt)
 {
     char host[NI_MAXHOST];
     char serv[NI_MAXSERV];
 
-    getnameinfo((struct sockaddr *) &(dt.sa), dt.sa_len, host, NI_MAXHOST, serv,
+    getnameinfo((struct sockaddr *)&(dt.sa), dt.sa_len, host, NI_MAXHOST, serv,
                 NI_MAXSERV, NI_NUMERICHOST);
 
     os << host << ":" << serv;

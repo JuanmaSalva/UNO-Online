@@ -92,7 +92,7 @@ void Client::Turn(Player &gamestate)
 		//Preguntar al jugador a que color quiere cambiar
 		do
 		{
-			std::cout << "What color do you want to change to? \n1. Red \n2. Yellow \n3. Green \n4. Blue\n";
+			std::cout << "What color do you want to change to? \n\033[0;31m1. Red \n\033[0;33m2. Yellow \n\033[0;32m3. Green \n\033[0;34m4. Blue\n\033[0;97m";
 			std::cin >> colorchoice;
 		} while (colorchoice < 1 || colorchoice > 4);
 

@@ -41,7 +41,7 @@ void Server::ConnectPlayers()
 
 		connectedPlayers++;
 		players.push_back(Player());
-		std::cout << "Jugadores faltantes: " << numPlayers - connectedPlayers << "\n";
+		std::cout << "Remaining players: " << numPlayers - connectedPlayers << "\n";
 	}
 }
 
@@ -136,47 +136,47 @@ void Server::sendMatchEnd(short winner)
 
 void Server::WaitPlayer()
 {
-	SocketTCP* indx = clients[playerTurn].get();
+	SocketTCP *indx = clients[playerTurn].get();
 	Play play;
 
 	if (indx->recv(play) == 0)
 	{
 		//terminamos el juego
-		std::cout << "A player has disconnected, waiting his response\n";
+		std::cout << "A player has disconnected, waiting their response\n";
 
-        int cont = 0;
-        bool reconnected = false;
+		int cont = 0;
+		bool reconnected = false;
 
-        SocketTCP* sock = &socket;
+		SocketTCP *sock = &socket;
 
-        std::thread threadConnection([&indx, &reconnected, &sock]()
-        { 
-			//guardar la dirección ip antes de cerrar la conexión
-			std::string ipDest = indx->GetIP();			
-            indx->closeConnection();
-            indx = sock->clientConnect(ipDest);
-            reconnected = true;
-        });
+		std::thread threadConnection([&indx, &reconnected, &sock]()
+									 {
+										 //guardar la dirección ip antes de cerrar la conexión
+										 std::string ipDest = indx->GetIP();
+										 indx->closeConnection();
+										 indx = sock->clientConnect(ipDest);
+										 reconnected = true;
+									 });
 
+		//tiene un margen de 60 segundos para unirse de vuelta
+		//se hace un bucle de máximo 60 iteraciones, y cada iteración tiene 1 segundo
+		while (cont < 60 && !reconnected)
+		{
+			sleep(1);
+			cont++;
+		}
 
-        //tiene un margen de 60 segundos para unirse de vuelta
-        //se hace un bucle de máximo 60 iteraciones, y cada iteración tiene 1 segundo
-        while (cont < 60 && !reconnected)
-        {
-            sleep(1);
-            cont++;
-        }
-
-
-        //si no se ha llegado a conectar, se termina el juego
-        if(!reconnected) {
+		//si no se ha llegado a conectar, se termina el juego
+		if (!reconnected)
+		{
 			sendMatchEnd(-1);
-            threadConnection.detach();
-        }
-        else {
+			threadConnection.detach();
+		}
+		else
+		{
 			threadConnection.join();
 			SendInfo(-1);
-			
+
 			std::cout << "Player reconnected\n";
 		}
 	}
