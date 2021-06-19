@@ -101,7 +101,7 @@ SocketTCP *SocketTCP::clientConnect()
     }
 
     getnameinfo(&client, client_len, host, NI_MAXHOST, service, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV);
-    std::cout << "Conexión desde: " << host << ":" << service << "\n";
+    std::cout << "Connection from: " << host << ":" << service << "\n";
 
     return new SocketTCP(client, client_len, client_socket);
 }

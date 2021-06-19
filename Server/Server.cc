@@ -142,7 +142,7 @@ void Server::WaitPlayer()
 	if (indx->recv(play) == 0)
 	{
 		//terminamos el juego
-		std::cout << "Se ha desconectado un jugador, esperando a que responda\n";
+		std::cout << "A player has disconnected, waiting his response\n";
 
         int cont = 0;
         bool reconnected = false;
@@ -171,8 +171,12 @@ void Server::WaitPlayer()
 			sendMatchEnd(-1);
             threadConnection.detach();
         }
-        else threadConnection.join();
-
+        else {
+			threadConnection.join();
+			SendInfo(-1);
+			
+			std::cout << "Player reconnected\n";
+		}
 	}
 	else
 	{
