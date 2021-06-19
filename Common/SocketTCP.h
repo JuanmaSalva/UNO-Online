@@ -9,6 +9,10 @@
 
 #include <ostream>
 
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 class SocketTCP;
 class Serializable;
 
@@ -25,7 +29,7 @@ public:
 
     SocketTCP(struct sockaddr _sa, socklen_t _sa_len, int newSd);
 
-    SocketTCP *clientConnect();
+    SocketTCP *clientConnect(std::string ipDest = "0");
 
     void closeConnection();
 
@@ -37,6 +41,10 @@ public:
 
     friend bool operator== (const SocketTCP &s1, const SocketTCP &s2);
 
+    std::string GetIP(){
+        struct sockaddr_in* antelope =  (struct sockaddr_in *) &sa;
+        return inet_ntoa(antelope->sin_addr);
+    }
 
 private:
     int sd;

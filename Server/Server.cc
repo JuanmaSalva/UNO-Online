@@ -151,8 +151,10 @@ void Server::WaitPlayer()
 
         std::thread threadConnection([&indx, &reconnected, &sock]()
         { 
+			//guardar la dirección ip antes de cerrar la conexión
+			std::string ipDest = indx->GetIP();			
             indx->closeConnection();
-            indx = sock->clientConnect();
+            indx = sock->clientConnect(ipDest);
             reconnected = true;
         });
 

@@ -86,25 +86,31 @@ void SocketTCP::closeConnection()
     close(sd);
 }
 
-SocketTCP *SocketTCP::clientConnect()
+SocketTCP *SocketTCP::clientConnect(std::string ipDest)
 {
-    char host[NI_MAXHOST];
     char service[NI_MAXSERV];
+    char host[NI_MAXHOST];
 
     struct sockaddr client;
     socklen_t client_len = sizeof(struct sockaddr);
-    int client_socket = accept(sd, &client, &client_len); //este es el socket q específico a esa conexión
+    int client_socket;
 
-    if(client_socket < 0){
-        std::cerr << "[client connect] error: " << strerror(errno) << "\n";
-        return nullptr;
-    }
+    do{
+        client_socket = accept(sd, &client, &client_len); //este es el socket q específico a esa conexión
 
-    getnameinfo(&client, client_len, host, NI_MAXHOST, service, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV);
-    std::cout << "Connection from: " << host << ":" << service << "\n";
+        if(client_socket < 0){
+            std::cerr << "[client connect] error: " << strerror(errno) << "\n";
+            return nullptr;
+        }
 
+        getnameinfo(&client, client_len, host, NI_MAXHOST, service, NI_MAXSERV, NI_NUMERICHOST | NI_NUMERICSERV);
+        std::cout << "Connection from: " << host << ":" << service << "\n";
+    } while (ipDest != "0" && strcmp(ipDest.c_str(), host) != 0);
+
+    std::cout << ipDest.c_str() << " " << host << "\n";
     return new SocketTCP(client, client_len, client_socket);
 }
+
 
 int SocketTCP::recv(Serializable &obj)
 {
