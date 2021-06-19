@@ -9,11 +9,14 @@
 
 #include <ostream>
 
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 class SocketTCP;
 class Serializable;
 
-bool operator == (const SocketTCP &s1, const SocketTCP &s2);
-std::ostream& operator << (std::ostream& os, const SocketTCP& dt);
+bool operator==(const SocketTCP &s1, const SocketTCP &s2);
+std::ostream &operator<<(std::ostream &os, const SocketTCP &dt);
 
 class SocketTCP
 {
@@ -25,7 +28,7 @@ public:
 
     SocketTCP(struct sockaddr _sa, socklen_t _sa_len, int newSd);
 
-    SocketTCP *clientConnect();
+    SocketTCP *clientConnect(std::string ipDest = "0");
 
     void closeConnection();
 
@@ -33,10 +36,15 @@ public:
 
     int send(Serializable &obj);
 
-    friend std::ostream& operator<<(std::ostream& os, const SocketTCP& dt);
+    friend std::ostream &operator<<(std::ostream &os, const SocketTCP &dt);
 
-    friend bool operator== (const SocketTCP &s1, const SocketTCP &s2);
+    friend bool operator==(const SocketTCP &s1, const SocketTCP &s2);
 
+    std::string GetIP()
+    {
+        struct sockaddr_in *antelope = (struct sockaddr_in *)&sa;
+        return inet_ntoa(antelope->sin_addr);
+    }
 
 private:
     int sd;
