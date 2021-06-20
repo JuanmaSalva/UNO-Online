@@ -50,7 +50,7 @@ void Server::InitCards()
 	//por colores
 	for (int i = 0; i < 4; i++)
 	{
-		//añadimos las 19 cartas de numeros (un 0 y del resto 2) y  2 de cada comodín
+		//añadimos las 19 cartas de numeros (un 0 y del resto 2) y 2 de cada comodín
 		cards.push_back(Card((Colors)i, Symbols::Zero));
 
 		for (int j = 1; j < 13; j++)
@@ -95,6 +95,9 @@ void Server::SendInfo(int lostTurn)
 {
 	//manda un mensaje a todo el mundo de la información de la partida, y al que le toca el turno le manda un mensaje especial
 	//std::cout << "player " << lostTurn << " lost their turn, it's player " << playerTurn << "'s turn\n";
+
+	short UNObitmask = calculateUNObitmask();
+
 	for (int i = 0; i < clients.size(); i++)
 	{
 		SocketTCP indx = *clients[i].get();
@@ -292,4 +295,18 @@ void Server::giveCards(int player, int numCards)
 			usedCardsPile = std::queue<Card>();
 		}
 	}
+}
+
+short Server::calculateUNObitmask(){
+	short res = 0;
+
+	//Crea una bitmask con unos en la posicion de los jugadores con solo una carta restante
+	for(int i = numPlayers-1; i >= 0; i--){
+		if(players[i].numCards == 1){
+			res += 1;
+		}
+		res<<1;
+	}
+
+	return res;
 }
