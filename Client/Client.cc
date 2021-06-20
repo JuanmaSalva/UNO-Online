@@ -25,11 +25,13 @@ void Client::StartGame()
 		case Player::MessageType::INFO:
 		{
 			msg.Print();
+			printUNO(msg.extraInfo);
 			break;
 		}
 		case Player::MessageType::TURN:
 		{
 			msg.Print();
+			printUNO(msg.extraInfo);
 			std::cout << "\nIt's your turn to play.\nSelect which card you want to play: ";
 			Turn(msg);
 			break;
@@ -37,6 +39,7 @@ void Client::StartGame()
 		case Player::MessageType::LOST:
 		{
 			msg.Print();
+			printUNO(msg.extraInfo);
 			std::cout << "\nYour turn was skipped!\n";
 			break;
 		}
@@ -104,4 +107,21 @@ void Client::Turn(Player &gamestate)
 	}
 
 	socket.send(play);
+}
+
+void Client::printUNO(short bitmask)
+{
+	if (bitmask != 0)
+	{
+		std::cout << "\nUNO! The following players are one card away from winning!\n";
+		for (int i = 0; i < 8; i++)
+		{
+			if (bitmask % 2 == 1)
+			{
+				std::cout << "Player " << i << ".\n";
+			}
+			bitmask = bitmask >> 1;
+		}
+		std::cout << "\n";
+	}
 }

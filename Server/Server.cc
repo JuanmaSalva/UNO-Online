@@ -110,6 +110,7 @@ void Server::SendInfo(int lostTurn)
 			players[i].type = Player::MessageType::TURN;
 
 		players[i].setTopCard(topCard);
+		players[i].extraInfo = UNObitmask;
 		//std::cout << "sending " << i << " msg type " << (short)players[i].type << "\n";
 		indx.send(players[i]);
 	}
@@ -305,8 +306,10 @@ short Server::calculateUNObitmask(){
 		if(players[i].numCards == 1){
 			res += 1;
 		}
-		res<<1;
+		res = res<<1;
 	}
+
+	res = res>>1; //El ultimo bitshift sobra
 
 	return res;
 }
