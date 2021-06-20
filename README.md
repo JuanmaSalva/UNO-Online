@@ -33,4 +33,10 @@ Los datos enviados son:
 * 2 bytes de información extra
 	* Utilizado para marcar quien gana o quienes están a punto de ganar
 
+El tamaño final del mensaje es de 130 bytes. Este mensaje podría variar si cambiamos el tamaño de la mano, hemos escogido que el maximo de cartas que puede tener un jugador es de 30, y si intenta robar más no se le darán.
+
 •Desde el cliente: &nbsp;
+
+El cliente solo tiene que enviar el índice de la carta que escoja jugar y el color escogido en caso de utilizar una carta 'Wild'. Si el índice es -1 se entiende que el jugador quiere robar una carta.
+
+El tamaño del mensaje de jugada es pequeño, ocupando solo 4 bytes.

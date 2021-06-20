@@ -284,7 +284,8 @@ int Server::nextPlayer()
 void Server::giveCards(int player, int numCards)
 {
 	//Dar cartas al jugador seleccionado de las disponibles en la pila de robar
-	for (int i = 0; i < numCards; i++)
+	int i = 0;
+	while (i < numCards && !cardsPile.empty() && players[player].numCards < MAX_HAND_SIZE)
 	{
 		players[player].addCard(cardsPile.front());
 		cardsPile.pop();
@@ -295,21 +296,25 @@ void Server::giveCards(int player, int numCards)
 			cardsPile = usedCardsPile;
 			usedCardsPile = std::queue<Card>();
 		}
+		i++;
 	}
 }
 
-short Server::calculateUNObitmask(){
+short Server::calculateUNObitmask()
+{
 	short res = 0;
 
 	//Crea una bitmask con unos en la posicion de los jugadores con solo una carta restante
-	for(int i = numPlayers-1; i >= 0; i--){
-		if(players[i].numCards == 1){
+	for (int i = numPlayers - 1; i >= 0; i--)
+	{
+		if (players[i].numCards == 1)
+		{
 			res += 1;
 		}
-		res = res<<1;
+		res = res << 1;
 	}
 
-	res = res>>1; //El ultimo bitshift sobra
+	res = res >> 1; //El ultimo bitshift sobra
 
 	return res;
 }

@@ -51,6 +51,8 @@ public:
 		-1: Cerrada inesperadamente
 		0-8: Gana ese jugador
 		999: Tu eres el ganador
+		Cuando se usa para info:
+		Una bitmask que indica que jugadores estan a una carta de ganar
 	*/
 	short extraInfo;
 
