@@ -110,7 +110,6 @@ SocketTCP *SocketTCP::clientConnect(std::string ipDest)
         std::cout << "Connection from: " << host << ":" << service << "\n";
     } while (ipDest != "0" && strcmp(ipDest.c_str(), host) != 0);
 
-    std::cout << ipDest.c_str() << " " << host << "\n";
     return new SocketTCP(client, client_len, client_socket);
 }
 
@@ -122,6 +121,7 @@ int SocketTCP::recv(Serializable &obj)
     if (bytes < 0)
     {
         std::cerr << "[recv] error: " << strerror(errno) << "\n";
+        exit(errno);
     }
 
     if (bytes == 0)

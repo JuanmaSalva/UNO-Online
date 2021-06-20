@@ -37,6 +37,7 @@ private:
 
 	int nextPlayer();
 	void giveCards(int player, int numCards);
+	short calculateUNObitmask();
 
 	void InitCards();
 	void ConnectPlayers();

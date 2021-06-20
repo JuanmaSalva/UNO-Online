@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 
 #include "../Common/SocketTCP.h"
@@ -22,4 +23,6 @@ private:
 	std::string nombre;
 
 	bool inGame = true;
+
+	void printUNO(short bitmask);
 };

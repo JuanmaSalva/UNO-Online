@@ -50,7 +50,7 @@ void Server::InitCards()
 	//por colores
 	for (int i = 0; i < 4; i++)
 	{
-		//añadimos las 19 cartas de numeros (un 0 y del resto 2) y  2 de cada comodín
+		//añadimos las 19 cartas de numeros (un 0 y del resto 2) y 2 de cada comodín
 		cards.push_back(Card((Colors)i, Symbols::Zero));
 
 		for (int j = 1; j < 13; j++)
@@ -95,6 +95,9 @@ void Server::SendInfo(int lostTurn)
 {
 	//manda un mensaje a todo el mundo de la información de la partida, y al que le toca el turno le manda un mensaje especial
 	//std::cout << "player " << lostTurn << " lost their turn, it's player " << playerTurn << "'s turn\n";
+
+	short UNObitmask = calculateUNObitmask();
+
 	for (int i = 0; i < clients.size(); i++)
 	{
 		SocketTCP indx = *clients[i].get();
@@ -107,6 +110,7 @@ void Server::SendInfo(int lostTurn)
 			players[i].type = Player::MessageType::TURN;
 
 		players[i].setTopCard(topCard);
+		players[i].extraInfo = UNObitmask;
 		//std::cout << "sending " << i << " msg type " << (short)players[i].type << "\n";
 		indx.send(players[i]);
 	}
@@ -280,7 +284,8 @@ int Server::nextPlayer()
 void Server::giveCards(int player, int numCards)
 {
 	//Dar cartas al jugador seleccionado de las disponibles en la pila de robar
-	for (int i = 0; i < numCards; i++)
+	int i = 0;
+	while (i < numCards && !cardsPile.empty() && players[player].numCards < MAX_HAND_SIZE)
 	{
 		players[player].addCard(cardsPile.front());
 		cardsPile.pop();
@@ -291,5 +296,25 @@ void Server::giveCards(int player, int numCards)
 			cardsPile = usedCardsPile;
 			usedCardsPile = std::queue<Card>();
 		}
+		i++;
 	}
+}
+
+short Server::calculateUNObitmask()
+{
+	short res = 0;
+
+	//Crea una bitmask con unos en la posicion de los jugadores con solo una carta restante
+	for (int i = numPlayers - 1; i >= 0; i--)
+	{
+		if (players[i].numCards == 1)
+		{
+			res += 1;
+		}
+		res = res << 1;
+	}
+
+	res = res >> 1; //El ultimo bitshift sobra
+
+	return res;
 }
