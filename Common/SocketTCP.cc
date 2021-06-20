@@ -121,6 +121,7 @@ int SocketTCP::recv(Serializable &obj)
     if (bytes < 0)
     {
         std::cerr << "[recv] error: " << strerror(errno) << "\n";
+        exit(errno);
     }
 
     if (bytes == 0)

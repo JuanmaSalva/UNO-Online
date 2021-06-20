@@ -21,7 +21,7 @@ std::ostream &operator<<(std::ostream &os, const SocketTCP &dt);
 class SocketTCP
 {
 public:
-    static const int32_t MAX_MESSAGE_SIZE = 32000; //aprox xd
+    static const int32_t MAX_MESSAGE_SIZE = 32000;
 
     //constructora para el server
     SocketTCP(const char *address, const char *port, bool isClient = false);
