@@ -90,13 +90,13 @@ public:
 			std::cout << "Skip ";
 			break;
 		case Symbols::DrawTwo:
-			std::cout << "DrawTwo ";
+			std::cout << "Draw Two ";
 			break;
 		case Symbols::Wild:
 			std::cout << "Wild";
 			break;
 		case Symbols::WildDrawFour:
-			std::cout << "Te mamaste (aka x4 multicolor)";
+			std::cout << "Wild Draw Four";
 			break;
 		default:
 			std::cout << (int)_symbol << " ";
